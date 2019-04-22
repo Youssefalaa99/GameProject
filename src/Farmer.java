@@ -1,2 +1,2 @@
-public class Farmer {
+public class Farmer extends Crosser {
 }

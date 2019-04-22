@@ -1,2 +1,2 @@
-public class Plant {
+public class Plant extends Crosser {
 }
