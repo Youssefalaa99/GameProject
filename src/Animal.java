@@ -1,12 +1,12 @@
 import java.awt.image.BufferedImage;
 
-public class Animal implements ICrosser{
+public abstract class Animal implements ICrosser{
 
     private double weight;
     private BufferedImage[] gif;
     private String lbl;
 
-    public Animal (float w,BufferedImage[] g){
+    public Animal (double w,BufferedImage[] g){
         weight=w;
         gif=g;
     }

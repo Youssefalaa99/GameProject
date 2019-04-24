@@ -1,7 +1,7 @@
 import java.awt.image.BufferedImage;
 
 public class Herbivorous extends Animal {
-    public Herbivorous(float w, BufferedImage[] g) {
+    public Herbivorous(double w, BufferedImage[] g) {
         super(w, g);
     }
 
