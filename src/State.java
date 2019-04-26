@@ -5,7 +5,7 @@ public class State {
     private List<ICrosser> rightBankCrossers;
     private List<ICrosser> leftBankCrossers;
     private List<ICrosser> boatRiders;
-    private String score;
+    private String numberOfMoves;
     private boolean isBoatOnTheLeftBank;
 
     public State(){
@@ -38,12 +38,12 @@ public class State {
         this.boatRiders = boatRiders;
     }
 
-    public String getScore() {
-        return score;
+    public String getNumberOfMoves() {
+        return numberOfMoves;
     }
 
-    public void setScore(String score) {
-        this.score = score;
+    public void setNumberOfMoves(String numberOfMoves) {
+        this.numberOfMoves = numberOfMoves;
     }
 
     public boolean isBoatOnTheLeftBank() {

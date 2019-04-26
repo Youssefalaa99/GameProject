@@ -27,7 +27,7 @@ public abstract class Animal implements ICrosser{
     }
 
     @Override
-    public int getEatingRank(){ return 2;}
+    public abstract int getEatingRank();
 
     @Override
     public BufferedImage[] getImages() {

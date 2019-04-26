@@ -1,7 +1,11 @@
+import java.util.ArrayList;
 import java.util.List;
 
 public class GameEngine implements IRiverCrossingController {
     private static GameEngine instance;
+    private ICrossingStrategy strategy;
+
+
 
     private GameEngine(){
     }
@@ -16,7 +20,7 @@ public class GameEngine implements IRiverCrossingController {
 
     @Override
     public void newGame(ICrossingStrategy gameStrategy) {
-
+        this.strategy=gameStrategy;
     }
 
     @Override
@@ -26,17 +30,19 @@ public class GameEngine implements IRiverCrossingController {
 
     @Override
     public String[] getInstructions() {
-        return new String[0];
+        return strategy.getInstructions();
     }
 
     @Override
     public List<ICrosser> getCrossersOnRightBank() {
-        return null;
+        List<ICrosser> rightCrossers=new ArrayList<>();
+        return rightCrossers;
     }
 
     @Override
     public List<ICrosser> getCrossersOnLeftBank() {
-        return null;
+        List<ICrosser> leftCrossers=new ArrayList<>();
+        return leftCrossers;
     }
 
     @Override
@@ -51,11 +57,23 @@ public class GameEngine implements IRiverCrossingController {
 
     @Override
     public boolean canMove(List<ICrosser> crossers, boolean fromLeftToRightBank) {
-        return false;
+        if(strategy.isValid(getCrossersOnRightBank(),getCrossersOnLeftBank(),crossers)){
+            System.out.println("Can move");
+            return true;
+        }
+        else {
+            System.out.println("Can't move");
+            return false;
+        }
     }
 
     @Override
     public void doMove(List<ICrosser> crossers, boolean fromLeftToRightBank) {
+        if(canMove(crossers,fromLeftToRightBank)){
+            //Test
+            System.out.println("Doing move");
+
+        }
 
     }
 
