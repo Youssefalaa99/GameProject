@@ -1,20 +1,21 @@
 public class Originator {
     private State state;
 
-    public Originator(State state){
-            this.state=state;
+    public void setState(State state){
+        this.state=state;
     }
 
-    public State getState() {
-        return state;
+    public State getState(){
+        return this.state;
     }
 
     public Memento saveStateToMemento(){
         return new Memento(state);
     }
 
-    public void getStateFromMemento(Memento memento){
+    public State getStateFromMemento(Memento memento){
         state=memento.getState();
+        return state;
     }
 
 }

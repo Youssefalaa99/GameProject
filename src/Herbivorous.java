@@ -1,7 +1,8 @@
 import java.awt.image.BufferedImage;
 
 public class Herbivorous extends Animal {
-    public Herbivorous(float w, BufferedImage[] g) {
+    private final int eatingRank=1;
+    public Herbivorous(double w, BufferedImage[] g) {
         super(w, g);
     }
 
@@ -11,6 +12,6 @@ public class Herbivorous extends Animal {
 
     @Override
     public int getEatingRank() {
-        return 3;
+        return eatingRank;
     }
 }
