@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane minHeight="800.0" minWidth="900.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GameEngine">
+   <children>
+      <Button mnemonicParsing="false" text="Button" />
+      <ImageView fitHeight="800.0" fitWidth="900.0" pickOnBounds="true">
+         <image>
+            <Image url="@../River.jpg" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="boat" fitHeight="81.0" fitWidth="210.0" layoutX="667.0" layoutY="692.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../Boat.jpg" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="carni" fitHeight="81.0" fitWidth="77.0" layoutX="744.0" layoutY="524.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../Carnivor.jpg" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="farmer" fitHeight="108.0" fitWidth="61.0" layoutX="683.0" layoutY="490.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../Farmer.jpg" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="herbi" fitHeight="112.0" fitWidth="49.0" layoutX="618.0" layoutY="471.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../herbivore_burned.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="plant" fitHeight="122.0" fitWidth="61.0" layoutX="825.0" layoutY="539.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../Carrot.png" />
+         </image>
+      </ImageView>
+      <Button fx:id="moveBtn" layoutX="385.0" layoutY="138.0" mnemonicParsing="false" onAction="#btnAction" prefHeight="26.0" prefWidth="130.0" text="Move Boat" />
+   </children>
+</AnchorPane>

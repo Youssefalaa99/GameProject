@@ -1,5 +1,3 @@
-import org.jetbrains.annotations.Contract;
-
 import java.awt.image.BufferedImage;
 
 public class Plant implements ICrosser {
