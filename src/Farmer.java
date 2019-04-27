@@ -7,7 +7,6 @@ public class Farmer implements ICrosser {
     private String lbl;
     private final int eatingRank=5;
 
-
     public Farmer (double w,BufferedImage[] g){
         weight=w;
         gif=g;

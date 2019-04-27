@@ -43,7 +43,7 @@ public class LevelOne implements ICrossingStrategy {
             for(int j=0;j<leftBankCrossers.size();j++){
                 ICrosser crosser2=leftBankCrossers.get(j);
                 if(crosser1.getEatingRank() == crosser2.getEatingRank()+1){
-                    System.out.println("Harm happened");
+                    System.out.println("Harm happened in left bank");
                     return false;
                 }
             }
@@ -54,7 +54,7 @@ public class LevelOne implements ICrossingStrategy {
             for(int j=0;j<rightBankCrossers.size();j++){
                 ICrosser crosser2=rightBankCrossers.get(j);
                 if(crosser1.getEatingRank() == crosser2.getEatingRank()+1){
-                    System.out.println("Harm happened");
+                    System.out.println("Harm happened in right bank");
                     return false;
                 }
             }

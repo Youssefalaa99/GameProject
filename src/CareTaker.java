@@ -7,8 +7,8 @@ public class CareTaker {
         mementoList.add(memento);
     }
 
-    public void removeMemento(Memento memento){
-        mementoList.remove(memento);
+    public void clearMemento(){
+        mementoList.clear();
     }
 
     public Memento getMemento(int index){
