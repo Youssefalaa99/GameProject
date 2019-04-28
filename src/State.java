@@ -7,6 +7,8 @@ public class State {
     private List<ICrosser> boatRiders;
     private int numberOfMoves;
     private boolean isBoatOnTheLeftBank;
+    private File file;
+    private ICrossingStrategy strategy;
 
     public State(){
         rightBankCrossers=new ArrayList<>();
@@ -14,6 +16,37 @@ public class State {
         boatRiders=new ArrayList<>();
         isBoatOnTheLeftBank=true;
         numberOfMoves=0;
+        file=new File();
+    }
+
+    public ICrossingStrategy getStrategy() {
+        return strategy;
+    }
+
+    public void setStrategy(ICrossingStrategy strategy) {
+        this.strategy = strategy;
+    }
+
+    public void save(){
+        if(strategy instanceof LevelOne){
+            System.out.println("Saving level one");
+            file.saveGame(this,"LevelOne");
+        }
+        else if(strategy instanceof LevelTwo){
+            System.out.println("Saving level two");
+            file.saveGame(this,"LevelTwo");
+        }
+
+    }
+
+    public void load(){
+        State loadedState=file.loadGame();
+        this.setStrategy(loadedState.getStrategy());
+        this.setLeftBankCrossers(loadedState.getLeftBankCrossers());
+        this.setRightBankCrossers(loadedState.getRightBankCrossers());
+        this.setBoatRiders(loadedState.getBoatRiders());
+        this.setNumberOfMoves(loadedState.getNumberOfMoves());
+        this.setBoatOnTheLeftBank(loadedState.getIsBoatOnTheLeftBank());
     }
 
     public List<ICrosser> getRightBankCrossers() {
@@ -48,7 +81,7 @@ public class State {
         this.numberOfMoves = numberOfMoves;
     }
 
-    public boolean isBoatOnTheLeftBank() {
+    public boolean getIsBoatOnTheLeftBank() {
         return isBoatOnTheLeftBank;
     }
 
@@ -107,7 +140,7 @@ public class State {
             boatRiders.add(crosser);
         }
 
-        state.setBoatOnTheLeftBank(this.isBoatOnTheLeftBank());
+        state.setBoatOnTheLeftBank(this.getIsBoatOnTheLeftBank());
         state.setNumberOfMoves(this.getNumberOfMoves());
         state.setLeftBankCrossers(leftCrossers);
         state.setRightBankCrossers(rightCrossers);
@@ -123,7 +156,7 @@ public class State {
                 ", leftBankCrossers=" + leftBankCrossers +
                 ", boatRiders=" + boatRiders +
                 ", numberOfMoves=" + numberOfMoves +
-                ", isBoatOnTheLeftBank=" + isBoatOnTheLeftBank +
+                ", getIsBoatOnTheLeftBank=" + isBoatOnTheLeftBank +
                 '}';
     }
 }

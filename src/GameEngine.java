@@ -1,14 +1,15 @@
-import java.util.ArrayList;
 import java.util.List;
 
 public class GameEngine implements IRiverCrossingController {
     private static GameEngine instance;
-    private ICrossingStrategy strategy;
     private State model;
     private int currentState=0;
     private int savedState=0;
     private Originator originator=new Originator();
     private CareTaker careTaker=new CareTaker();
+    private Invoker invoker=new Invoker();
+    private LoadGame loadGame;
+    private SaveGame saveGame;
 
 
 
@@ -26,12 +27,16 @@ public class GameEngine implements IRiverCrossingController {
 
     @Override
     public void newGame(ICrossingStrategy gameStrategy) {
-        this.strategy=gameStrategy;
         model=new State();
-        model.setLeftBankCrossers(strategy.getInitialCrossers());
+        model.setStrategy(gameStrategy);
+        model.setLeftBankCrossers(model.getStrategy().getInitialCrossers());
+        //Memento setup
         originator.setState(model.copyState());
         careTaker.addMemento(originator.saveStateToMemento());
         savedState++;
+        //Command setup
+        loadGame=new LoadGame(model);
+        saveGame=new SaveGame(model);
         //Rendering happens here
     }
 
@@ -42,7 +47,7 @@ public class GameEngine implements IRiverCrossingController {
         model.clearRightBank();
         model.setNumberOfMoves(0);
         model.setBoatOnTheLeftBank(true);
-        model.setLeftBankCrossers(strategy.getInitialCrossers());
+        model.setLeftBankCrossers(model.getStrategy().getInitialCrossers());
         currentState=0;
         savedState=0;
         careTaker.clearMemento();
@@ -54,7 +59,7 @@ public class GameEngine implements IRiverCrossingController {
 
     @Override
     public String[] getInstructions() {
-        return strategy.getInstructions();
+        return model.getStrategy().getInstructions();
     }
 
     @Override
@@ -69,7 +74,7 @@ public class GameEngine implements IRiverCrossingController {
 
     @Override
     public boolean isBoatOnTheLeftBank() {
-        return model.isBoatOnTheLeftBank();
+        return model.getIsBoatOnTheLeftBank();
     }
 
     @Override
@@ -79,7 +84,7 @@ public class GameEngine implements IRiverCrossingController {
 
     @Override
     public boolean canMove(List<ICrosser> crossers, boolean fromLeftToRightBank) {
-        if(strategy.isValid(getCrossersOnRightBank(),getCrossersOnLeftBank(),crossers)){
+        if(model.getStrategy().isValid(getCrossersOnRightBank(),getCrossersOnLeftBank(),crossers)){
             System.out.println("Can move");
             return true;
         }
@@ -176,11 +181,22 @@ public class GameEngine implements IRiverCrossingController {
 
     @Override
     public void saveGame() {
-
+        invoker.setCommand(saveGame);
+        invoker.executeCommand();
     }
 
     @Override
     public void loadGame() {
+        invoker.setCommand(loadGame);
+        invoker.executeCommand();
+    }
+
+    public void levelOneComplete(){
+        /**MessageBox with restart button and nextLevel button
+         * if pressed restart call restart method
+         * if pressd next level do ICrossingStrategy strategy=new LevelTwo();
+         * then call newGame(strategy);
+        **/
     }
 
     @Override
