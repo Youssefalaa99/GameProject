@@ -29,7 +29,7 @@ public class GameEngine implements IRiverCrossingController {
     public void newGame(ICrossingStrategy gameStrategy) {
         model=new State();
         model.setStrategy(gameStrategy);
-        model.setLeftBankCrossers(model.getStrategy().getInitialCrossers());
+        model.setRightBankCrossers(model.getStrategy().getInitialCrossers());
         //Memento setup
         originator.setState(model.copyState());
         careTaker.addMemento(originator.saveStateToMemento());
@@ -47,7 +47,7 @@ public class GameEngine implements IRiverCrossingController {
         model.clearRightBank();
         model.setNumberOfMoves(0);
         model.setBoatOnTheLeftBank(false);
-        model.setLeftBankCrossers(model.getStrategy().getInitialCrossers());
+        model.setRightBankCrossers(model.getStrategy().getInitialCrossers());
         currentState=0;
         savedState=0;
         careTaker.clearMemento();
