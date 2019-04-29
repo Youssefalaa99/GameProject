@@ -111,7 +111,7 @@ public class GameEngine implements IRiverCrossingController, Initializable {
 
 	@Override
 	public boolean isBoatOnTheLeftBank() {
-		return model.isBoatOnTheLeftBank();
+		return model.getIsBoatOnTheLeftBank();
 	}
 
 	@Override
@@ -271,7 +271,7 @@ public class GameEngine implements IRiverCrossingController, Initializable {
 
 	
 	public void btnAction() {
-		newGame(null);
+		
 	}
 	public void movePlant() {
 
