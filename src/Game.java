@@ -2,16 +2,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class Game {
-    public static void main(String[] args){
-        //Test strategy
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+
+public class Game extends Application  {
+	public static void main(String[] args) {
+		// Test strategy
 //        LevelOne levelOne=new LevelOne();
 //        System.out.println(levelOne.getInstructions()[2]);
 
-        ArrayList<ICrosser> leftlist=new ArrayList<>();
-        ArrayList<ICrosser> rightlist=new ArrayList<>();
-        ArrayList<ICrosser> boatlist=new ArrayList<>();
-        CrosserFactory factory=new CrosserFactory();
+		ArrayList<ICrosser> leftlist = new ArrayList<>();
+		ArrayList<ICrosser> rightlist = new ArrayList<>();
+		ArrayList<ICrosser> boatlist = new ArrayList<>();
+		CrosserFactory factory = new CrosserFactory();
+		
 //        ICrosser famer1=factory.createCrosseer("F1");
 //        ICrosser famer2=factory.createCrosseer("F2");
 //        rightlist.add(factory.createCrosseer("H"));
@@ -24,9 +31,7 @@ public class Game {
 //        boatlist.remove(famer1);
 //        levelOne.isValid(rightlist,leftlist,boatlist);
 
-
-
-        //Test GameEngine
+		// Test GameEngine
 //        GameEngine engine=GameEngine.getInstance();
 //        LevelOne one=new LevelOne();
 //        engine.newGame(one);
@@ -47,7 +52,7 @@ public class Game {
 //        engine.redo();
 //        engine.printState();
 
-        //Test Memnto
+		// Test Memnto
 //        Originator originator=new Originator();
 //        CareTaker careTaker=new CareTaker();
 //        ArrayList<ICrosser> leftList=new ArrayList<>();
@@ -86,4 +91,14 @@ public class Game {
 //        System.out.println("Undo");
 //        originator.getStateFromMemento(careTaker.getMemento(0));
 //        System.out.println(originator.getState().toString());
+		launch(args);
 
+	}
+	public void start(Stage primaryStage) throws Exception {
+		Parent LoginUserGUI = FXMLLoader.load(getClass().getResource("Start.fxml"));
+		primaryStage.setTitle("River Crossing");
+		primaryStage.setScene(new Scene(LoginUserGUI, 500, 500));
+		primaryStage.show();
+	}
+	
+}

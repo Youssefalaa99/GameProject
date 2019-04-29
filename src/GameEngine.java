@@ -1,5 +1,8 @@
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ResourceBundle;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import javafx.util.Duration;
@@ -10,6 +13,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
@@ -21,24 +25,25 @@ public class GameEngine implements IRiverCrossingController, Initializable {
 	private ArrayList<String> boatList;
 	private ArrayList<String> leftList;
 	private ArrayList<String> rightList;
-    private static GameEngine instance;
-    private ICrossingStrategy strategy;
-    private State model;
-    private int currentState=0;
-    private int savedState=0;
-    private Originator originator=new Originator();
-    private CareTaker careTaker=new CareTaker();
+	private static GameEngine instance;
+	private ICrossingStrategy strategy;
+	private State model;
+	private int currentState = 0;
+	private int savedState = 0;
+	private Originator originator = new Originator();
+	private CareTaker careTaker = new CareTaker();
 
 	@FXML
-	private ImageView boat;
-	@FXML
+	private ImageView boat = new ImageView();
+	
 	private ImageView plant;
-	@FXML
+
 	private ImageView farmer;
-	@FXML
+
 	private ImageView herbi;
-	@FXML
+
 	private ImageView carni;
+
 	@FXML
 	private Button moveBtn;
 
@@ -48,8 +53,6 @@ public class GameEngine implements IRiverCrossingController, Initializable {
 	private TranslateTransition move2;
 	private TranslateTransition move3;
 
-	private static GameEngine instance;
-
 	private int counter;
 
 	public static synchronized GameEngine getInstance() {
@@ -58,74 +61,78 @@ public class GameEngine implements IRiverCrossingController, Initializable {
 
 		return instance;
 	}
-    @Override
-    public void newGame(ICrossingStrategy gameStrategy) {
-        this.strategy=gameStrategy;
-        model=new State();
-        model.setLeftBankCrossers(strategy.getInitialCrossers());
-        originator.setState(model.copyState());
-        careTaker.addMemento(originator.saveStateToMemento());
-        savedState++;
-        //Rendering happens here
-    }
 
-    @Override
-    public void resetGame() {
-        model.clearBoatRiders();
-        model.clearLeftBank();
-        model.clearRightBank();
-        model.setNumberOfMoves(0);
-        model.setBoatOnTheLeftBank(true);
-        model.setLeftBankCrossers(strategy.getInitialCrossers());
-        currentState=0;
-        savedState=0;
-        careTaker.clearMemento();
-        originator.setState(model.copyState());
-        careTaker.addMemento(originator.saveStateToMemento());
-        savedState++;
-        //Undo & Redo buttons disabled here
-    }
+	@Override
+	public void newGame(ICrossingStrategy gameStrategy) {
+//        this.strategy=gameStrategy;
+//        model=new State();
+//        model.setLeftBankCrossers(strategy.getInitialCrossers());
+//        originator.setState(model.copyState());
+//        careTaker.addMemento(originator.saveStateToMemento());
+//        savedState++;
+//    	
+		boat.setImage(new Image("Boat.jpg"));
+		boat.setLayoutX(667);
+		boat.setLayoutY(692);
 
-    @Override
-    public String[] getInstructions() {
-        return strategy.getInstructions();
-    }
+	}
 
-    @Override
-    public List<ICrosser> getCrossersOnRightBank() {
-        return model.getRightBankCrossers();
-    }
+	@Override
+	public void resetGame() {
+		model.clearBoatRiders();
+		model.clearLeftBank();
+		model.clearRightBank();
+		model.setNumberOfMoves(0);
+		model.setBoatOnTheLeftBank(true);
+		model.setLeftBankCrossers(strategy.getInitialCrossers());
+		currentState = 0;
+		savedState = 0;
+		careTaker.clearMemento();
+		originator.setState(model.copyState());
+		careTaker.addMemento(originator.saveStateToMemento());
+		savedState++;
+		// Undo & Redo buttons disabled here
+	}
 
-    @Override
-    public List<ICrosser> getCrossersOnLeftBank() {
-        return model.getLeftBankCrossers();
-    }
+	@Override
+	public String[] getInstructions() {
+		return strategy.getInstructions();
+	}
 
-    @Override
-    public boolean isBoatOnTheLeftBank() {
-        return model.isBoatOnTheLeftBank();
-    }
+	@Override
+	public List<ICrosser> getCrossersOnRightBank() {
+		return model.getRightBankCrossers();
+	}
 
-    @Override
-    public int getNumberOfSails() {
-        return model.getNumberOfMoves();
-    }
+	@Override
+	public List<ICrosser> getCrossersOnLeftBank() {
+		return model.getLeftBankCrossers();
+	}
 
-    @Override
-    public boolean canMove(List<ICrosser> crossers, boolean fromLeftToRightBank) {
-        if(strategy.isValid(getCrossersOnRightBank(),getCrossersOnLeftBank(),crossers)){
-            System.out.println("Can move");
-            return true;
-        }
-        else {
-            System.out.println("Can't move");
-            return false;
-        }
-    }
+	@Override
+	public boolean isBoatOnTheLeftBank() {
+		return model.isBoatOnTheLeftBank();
+	}
 
-    @Override
-    public void doMove(List<ICrosser> crossers, boolean fromLeftToRightBank) {
-        if(canMove(crossers,fromLeftToRightBank)){
+	@Override
+	public int getNumberOfSails() {
+		return model.getNumberOfMoves();
+	}
+
+	@Override
+	public boolean canMove(List<ICrosser> crossers, boolean fromLeftToRightBank) {
+		if (strategy.isValid(getCrossersOnRightBank(), getCrossersOnLeftBank(), crossers)) {
+			System.out.println("Can move");
+			return true;
+		} else {
+			System.out.println("Can't move");
+			return false;
+		}
+	}
+
+	@Override
+	public void doMove(List<ICrosser> crossers, boolean fromLeftToRightBank) {
+//		if (canMove(crossers, fromLeftToRightBank)) {
 //            if(fromLeftToRightBank==true){
 //                for(ICrosser crosser : crossers){
 //                    model.removeLeftCrosser(crosser);
@@ -142,137 +149,17 @@ public class GameEngine implements IRiverCrossingController, Initializable {
 //                model.setBoatOnTheLeftBank(true);
 //                model.setNumberOfMoves(model.getNumberOfMoves()+1);
 //            }
-
-            //Write code moving here and change model
-
-            originator.setState(model.copyState());
-            careTaker.addMemento(originator.saveStateToMemento());
-            savedState++;
-            currentState++;
-            //Undo button set enabled here
-        }
-        else {
-
-        }
-
-	}
-
-    @Override
-    public boolean canUndo() {
-        if(currentState >= 1){
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-
-    @Override
-    public boolean canRedo() {
-        if((savedState-1) > currentState){
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-
-    @Override
-    public void undo() {
-        if(canUndo()){
-            currentState--;
-            model=originator.getStateFromMemento(careTaker.getMemento(currentState));
-            //Rendering new view in scene builder
-            //Redo button enabled here
-            System.out.println("Undo done");
-        }
-        else{
-            //Undo button disabled here
-            System.out.println("Can't undo");
-        }
-
-	@Override
-	public boolean isBoatOnTheLeftBank() {
-		if (counter % 2 == 0)
-			return true;
-		else
-			return false;
-	}
-
-	@Override
-	public int getNumberOfSails() {
-		return counter;
-	}
-    @Override
-    public void redo() {
-        if(canRedo()){
-            currentState++;
-            model=originator.getStateFromMemento(careTaker.getMemento(currentState));
-            //Rendering new view in scene builder
-            //Undo button enabled here
-            System.out.println("Redo done");
-        }
-        else {
-            //Redo button disabled here
-            System.out.println("Can't Redo");
-        }
-    }
-
-	@Override
-	public void doMove(List<ICrosser> crossers, boolean fromLeftToRightBank) {
-
-		carni.setOnMouseClicked((MouseEvent e) -> {
-			moveCarni();
-		});
-		
-		herbi.setOnMouseClicked((MouseEvent e) -> {
-			moveHerbi();
-		});
-		
-		farmer.setOnMouseClicked((MouseEvent e) -> {
-			moveFarmer();
-		});
-		
-		plant.setOnMouseClicked((MouseEvent e) -> {
-			movePlant();
-		});
-		
-
-	}
-
-
-	@Override
-	public void saveGame() {
-
-	}
-
-	@Override
-	public void loadGame() {
-
-	}
-
-	@Override
-	public List<List<ICrosser>> solveGame() {
-		return null;
-	}
-
-	public void startGame(ActionEvent event) throws IOException {
-		FXMLLoader loader = new FXMLLoader();
-		loader.setLocation(getClass().getResource("Game.fxml"));
-		Parent ManagerGUI = loader.load();
-
-		Scene ManagerScene = new Scene(ManagerGUI);
-
-//		ManagerController controller = loader.getController();
-//		controller.initData();
-
-		Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
-
-		window.setScene(ManagerScene);
-		window.show();
-	}
-	
-	public void btnAction() {
+//
+//			// Write code moving here and change model
+//
+//			originator.setState(model.copyState());
+//			careTaker.addMemento(originator.saveStateToMemento());
+//			savedState++;
+//			currentState++;
+////			 Undo button set enabled here
+//		} else {
+//
+//		}
 
 		if (boatList.contains("Farmer")) {
 			try {
@@ -316,11 +203,59 @@ public class GameEngine implements IRiverCrossingController, Initializable {
 			}
 		} else
 			Alert.display("Boat can't sail without the Farmer");
+
+	}
+
+	@Override
+	public boolean canUndo() {
+		if (currentState >= 1) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean canRedo() {
+		if ((savedState - 1) > currentState) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public void undo() {
+		if (canUndo()) {
+			currentState--;
+			model = originator.getStateFromMemento(careTaker.getMemento(currentState));
+			// Rendering new view in scene builder
+			// Redo button enabled here
+			System.out.println("Undo done");
+		} else {
+			// Undo button disabled here
+			System.out.println("Can't undo");
+		}
+	}
+
+	public void redo() {
+		if (canRedo()) {
+			currentState++;
+			model = originator.getStateFromMemento(careTaker.getMemento(currentState));
+			// Rendering new view in scene builder
+			// Undo button enabled here
+			System.out.println("Redo done");
+		} else {
+			// Redo button disabled here
+			System.out.println("Can't Redo");
+		}
 	}
 
 	public void initialize(URL location, ResourceBundle resources) {
 		counter = 0;
 
+		newGame(null);
+		
 		boatList = new ArrayList<String>();
 		leftList = new ArrayList<String>();
 		rightList = new ArrayList<String>();
@@ -334,7 +269,10 @@ public class GameEngine implements IRiverCrossingController, Initializable {
 
 	}
 
-
+	
+	public void btnAction() {
+		newGame(null);
+	}
 	public void movePlant() {
 
 		move1.setNode(plant);
@@ -442,30 +380,50 @@ public class GameEngine implements IRiverCrossingController, Initializable {
 			return herbi;
 
 		case "Plant":
-			System.out.println("plant");
 			return plant;
 
 		default:
-			System.out.println("noo");
 			return null;
 		}
 
 	}
 
-    //Test to be removed:
-    public void printState(){
-        System.out.println(model.toString());
-    }
-    //Test to be removed:
-    public void removeLeft(ICrosser crosser){
-        model.removeLeftCrosser(crosser);
-    }
-    //Test to be removed:
-    public void removeRight(ICrosser crosser){
-        model.removeRightCrosser(crosser);
-    }
-    //Test to be removed:
-    public void addRider(ICrosser crosser){
-        model.addRider(crosser);
-    }
+	// Test to be removed:
+	public void printState() {
+		System.out.println(model.toString());
+	}
+
+	// Test to be removed:
+	public void removeLeft(ICrosser crosser) {
+		model.removeLeftCrosser(crosser);
+	}
+
+	// Test to be removed:
+	public void removeRight(ICrosser crosser) {
+		model.removeRightCrosser(crosser);
+	}
+
+	// Test to be removed:
+	public void addRider(ICrosser crosser) {
+		model.addRider(crosser);
+	}
+
+	@Override
+	public void saveGame() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void loadGame() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public List<List<ICrosser>> solveGame() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
