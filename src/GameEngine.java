@@ -64,14 +64,14 @@ public class GameEngine implements IRiverCrossingController, Initializable {
 
 	@Override
 	public void newGame(ICrossingStrategy gameStrategy) {
-//        this.strategy=gameStrategy;
-//        model=new State();
-//        model.setLeftBankCrossers(strategy.getInitialCrossers());
-//        originator.setState(model.copyState());
-//        careTaker.addMemento(originator.saveStateToMemento());
-//        savedState++;
-//    	
-		boat.setImage(new Image("Boat.jpg"));
+        this.strategy=gameStrategy;
+        model=new State();
+        model.setLeftBankCrossers(strategy.getInitialCrossers());
+        originator.setState(model.copyState());
+        careTaker.addMemento(originator.saveStateToMemento());
+        savedState++;
+    	
+		boat.setImage();
 		boat.setLayoutX(667);
 		boat.setLayoutY(692);
 
@@ -254,7 +254,7 @@ public class GameEngine implements IRiverCrossingController, Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		counter = 0;
 
-		newGame(null);
+		newGame(LevelOne);
 		
 		boatList = new ArrayList<String>();
 		leftList = new ArrayList<String>();
