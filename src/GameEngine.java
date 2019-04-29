@@ -77,62 +77,64 @@ public class GameEngine implements IRiverCrossingController, Initializable {
 
 	}
 
-	@Override
-	public void resetGame() {
-		model.clearBoatRiders();
-		model.clearLeftBank();
-		model.clearRightBank();
-		model.setNumberOfMoves(0);
-		model.setBoatOnTheLeftBank(true);
-		model.setLeftBankCrossers(strategy.getInitialCrossers());
-		currentState = 0;
-		savedState = 0;
-		careTaker.clearMemento();
-		originator.setState(model.copyState());
-		careTaker.addMemento(originator.saveStateToMemento());
-		savedState++;
-		// Undo & Redo buttons disabled here
-	}
 
-	@Override
-	public String[] getInstructions() {
-		return strategy.getInstructions();
-	}
+    @Override
+    public void resetGame() {
+        model.clearBoatRiders();
+        model.clearLeftBank();
+        model.clearRightBank();
+        model.setNumberOfMoves(0);
+        model.setBoatOnTheLeftBank(false);
+        model.setLeftBankCrossers(model.getStrategy().getInitialCrossers());
+        currentState=0;
+        savedState=0;
+        careTaker.clearMemento();
+        originator.setState(model.copyState());
+        careTaker.addMemento(originator.saveStateToMemento());
+        savedState++;
+        //Undo & Redo buttons disabled here
+    }
 
-	@Override
-	public List<ICrosser> getCrossersOnRightBank() {
-		return model.getRightBankCrossers();
-	}
+    @Override
+    public String[] getInstructions() {
+        return model.getStrategy().getInstructions();
+    }
 
-	@Override
-	public List<ICrosser> getCrossersOnLeftBank() {
-		return model.getLeftBankCrossers();
-	}
+    @Override
+    public List<ICrosser> getCrossersOnRightBank() {
+        return model.getRightBankCrossers();
+    }
 
-	@Override
-	public boolean isBoatOnTheLeftBank() {
-		return model.getIsBoatOnTheLeftBank();
-	}
+    @Override
+    public List<ICrosser> getCrossersOnLeftBank() {
+        return model.getLeftBankCrossers();
+    }
 
-	@Override
-	public int getNumberOfSails() {
-		return model.getNumberOfMoves();
-	}
+    @Override
+    public boolean isBoatOnTheLeftBank() {
+        return model.getIsBoatOnTheLeftBank();
+    }
 
-	@Override
-	public boolean canMove(List<ICrosser> crossers, boolean fromLeftToRightBank) {
-		if (strategy.isValid(getCrossersOnRightBank(), getCrossersOnLeftBank(), crossers)) {
-			System.out.println("Can move");
-			return true;
-		} else {
-			System.out.println("Can't move");
-			return false;
-		}
-	}
+    @Override
+    public int getNumberOfSails() {
+        return model.getNumberOfMoves();
+    }
 
-	@Override
-	public void doMove(List<ICrosser> crossers, boolean fromLeftToRightBank) {
-//		if (canMove(crossers, fromLeftToRightBank)) {
+    @Override
+    public boolean canMove(List<ICrosser> crossers, boolean fromLeftToRightBank) {
+        if(model.getStrategy().isValid(getCrossersOnRightBank(),getCrossersOnLeftBank(),crossers)){
+            System.out.println("Can move");
+            return true;
+        }
+        else {
+            System.out.println("Can't move");
+            return false;
+        }
+    }
+
+    @Override
+    public void doMove(List<ICrosser> crossers, boolean fromLeftToRightBank) {
+        if(canMove(crossers,fromLeftToRightBank)){
 //            if(fromLeftToRightBank==true){
 //                for(ICrosser crosser : crossers){
 //                    model.removeLeftCrosser(crosser);

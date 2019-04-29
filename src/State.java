@@ -14,7 +14,7 @@ public class State {
         rightBankCrossers=new ArrayList<>();
         leftBankCrossers=new ArrayList<>();
         boatRiders=new ArrayList<>();
-        isBoatOnTheLeftBank=true;
+        isBoatOnTheLeftBank=false;
         numberOfMoves=0;
         file=new File();
     }
