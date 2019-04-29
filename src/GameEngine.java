@@ -26,16 +26,17 @@ public class GameEngine implements IRiverCrossingController, Initializable {
 	private ArrayList<String> leftList;
 	private ArrayList<String> rightList;
 	private static GameEngine instance;
-	private ICrossingStrategy strategy;
 	private State model;
 	private int currentState = 0;
 	private int savedState = 0;
 	private Originator originator = new Originator();
 	private CareTaker careTaker = new CareTaker();
-
+	private Invoker invoker = new Invoker();
+	private LoadGame loadGame;
+	private SaveGame saveGame;
 	@FXML
 	private ImageView boat = new ImageView();
-	
+
 	private ImageView plant;
 
 	private ImageView farmer;
@@ -64,147 +65,152 @@ public class GameEngine implements IRiverCrossingController, Initializable {
 
 	@Override
 	public void newGame(ICrossingStrategy gameStrategy) {
-        this.strategy=gameStrategy;
-        model=new State();
-        model.setLeftBankCrossers(strategy.getInitialCrossers());
-        originator.setState(model.copyState());
-        careTaker.addMemento(originator.saveStateToMemento());
-        savedState++;
-    	
+		model = new State();
+		model.setStrategy(gameStrategy);
+		model.setLeftBankCrossers(model.getStrategy().getInitialCrossers());
+		// Memento setup
+		originator.setState(model.copyState());
+		careTaker.addMemento(originator.saveStateToMemento());
+		savedState++;
+		// Command setup
+		loadGame = new LoadGame(model);
+		saveGame = new SaveGame(model);
+		// Rendering happens here
+
 		boat.setImage();
 		boat.setLayoutX(667);
 		boat.setLayoutY(692);
 
 	}
 
+	@Override
+	public void resetGame() {
+		model.clearBoatRiders();
+		model.clearLeftBank();
+		model.clearRightBank();
+		model.setNumberOfMoves(0);
+		model.setBoatOnTheLeftBank(false);
+		model.setLeftBankCrossers(model.getStrategy().getInitialCrossers());
+		currentState = 0;
+		savedState = 0;
+		careTaker.clearMemento();
+		originator.setState(model.copyState());
+		careTaker.addMemento(originator.saveStateToMemento());
+		savedState++;
+		// Undo & Redo buttons disabled here
+	}
 
-    @Override
-    public void resetGame() {
-        model.clearBoatRiders();
-        model.clearLeftBank();
-        model.clearRightBank();
-        model.setNumberOfMoves(0);
-        model.setBoatOnTheLeftBank(false);
-        model.setLeftBankCrossers(model.getStrategy().getInitialCrossers());
-        currentState=0;
-        savedState=0;
-        careTaker.clearMemento();
-        originator.setState(model.copyState());
-        careTaker.addMemento(originator.saveStateToMemento());
-        savedState++;
-        //Undo & Redo buttons disabled here
-    }
+	@Override
+	public String[] getInstructions() {
+		return model.getStrategy().getInstructions();
+	}
 
-    @Override
-    public String[] getInstructions() {
-        return model.getStrategy().getInstructions();
-    }
+	@Override
+	public List<ICrosser> getCrossersOnRightBank() {
+		return model.getRightBankCrossers();
+	}
 
-    @Override
-    public List<ICrosser> getCrossersOnRightBank() {
-        return model.getRightBankCrossers();
-    }
+	@Override
+	public List<ICrosser> getCrossersOnLeftBank() {
+		return model.getLeftBankCrossers();
+	}
 
-    @Override
-    public List<ICrosser> getCrossersOnLeftBank() {
-        return model.getLeftBankCrossers();
-    }
+	@Override
+	public boolean isBoatOnTheLeftBank() {
+		return model.getIsBoatOnTheLeftBank();
+	}
 
-    @Override
-    public boolean isBoatOnTheLeftBank() {
-        return model.getIsBoatOnTheLeftBank();
-    }
+	@Override
+	public int getNumberOfSails() {
+		return model.getNumberOfMoves();
+	}
 
-    @Override
-    public int getNumberOfSails() {
-        return model.getNumberOfMoves();
-    }
+	@Override
+	public boolean canMove(List<ICrosser> crossers, boolean fromLeftToRightBank) {
+		if (model.getStrategy().isValid(getCrossersOnRightBank(), getCrossersOnLeftBank(), crossers)) {
+			System.out.println("Can move");
+			return true;
+		} else {
+			System.out.println("Can't move");
+			return false;
+		}
+	}
 
-    @Override
-    public boolean canMove(List<ICrosser> crossers, boolean fromLeftToRightBank) {
-        if(model.getStrategy().isValid(getCrossersOnRightBank(),getCrossersOnLeftBank(),crossers)){
-            System.out.println("Can move");
-            return true;
-        }
-        else {
-            System.out.println("Can't move");
-            return false;
-        }
-    }
+	@Override
+	public void doMove(List<ICrosser> crossers, boolean fromLeftToRightBank) {
+		if (canMove(crossers, fromLeftToRightBank)) {
+			if (canMove(crossers, fromLeftToRightBank)) {
+//	            if(fromLeftToRightBank==true){
+//	                for(ICrosser crosser : crossers){
+//	                    model.removeLeftCrosser(crosser);
+//	                    model.addRightCrosser(crosser);
+//	                }
+//	                model.setBoatOnTheLeftBank(false);
+//	                model.setNumberOfMoves(model.getNumberOfMoves()+1);
+//	            }
+//	            else {
+//	                for(ICrosser crosser : crossers){
+//	                    model.removeRightCrosser(crosser);
+//	                    model.addLeftCrosser(crosser);
+//	                }
+//	                model.setBoatOnTheLeftBank(true);
+//	                model.setNumberOfMoves(model.getNumberOfMoves()+1);
+//	            }
 
-    @Override
-    public void doMove(List<ICrosser> crossers, boolean fromLeftToRightBank) {
-        if(canMove(crossers,fromLeftToRightBank)){
-//            if(fromLeftToRightBank==true){
-//                for(ICrosser crosser : crossers){
-//                    model.removeLeftCrosser(crosser);
-//                    model.addRightCrosser(crosser);
-//                }
-//                model.setBoatOnTheLeftBank(false);
-//                model.setNumberOfMoves(model.getNumberOfMoves()+1);
-//            }
-//            else {
-//                for(ICrosser crosser : crossers){
-//                    model.removeRightCrosser(crosser);
-//                    model.addLeftCrosser(crosser);
-//                }
-//                model.setBoatOnTheLeftBank(true);
-//                model.setNumberOfMoves(model.getNumberOfMoves()+1);
-//            }
-//
-//			// Write code moving here and change model
-//
-//			originator.setState(model.copyState());
-//			careTaker.addMemento(originator.saveStateToMemento());
-//			savedState++;
-//			currentState++;
-////			 Undo button set enabled here
-//		} else {
-//
-//		}
+				// Write code moving here and change model
 
-		if (boatList.contains("Farmer")) {
-			try {
-
-				move1.setNode(boat);
-				move2.setNode(getinBoat(0));
-				move3.setNode(getinBoat(1));
-			} catch (Exception e) {
-				move3.setNode(null);
-			}
-			counter++;
-
-			if (!isBoatOnTheLeftBank()) {
-
-				move1.setByX(-600);
-				move1.setByY(0);
-				move1.play();
-
-				move2.setByX(-600);
-				move2.setByY(0);
-				move2.play();
-
-				move3.setByX(-600);
-				move3.setByY(0);
-				move3.play();
-
+				originator.setState(model.copyState());
+				careTaker.addMemento(originator.saveStateToMemento());
+				savedState++;
+				currentState++;
+				// Undo button set enabled here
 			} else {
 
-				move1.setByX(600);
-				move1.setByY(0);
-				move1.play();
-
-				move2.setByX(600);
-				move2.setByY(0);
-				move2.play();
-
-				move3.setByX(600);
-				move3.setByY(0);
-				move3.play();
-
 			}
-		} else
-			Alert.display("Boat can't sail without the Farmer");
+
+			if (boatList.contains("Farmer")) {
+				try {
+
+					move1.setNode(boat);
+					move2.setNode(getinBoat(0));
+					move3.setNode(getinBoat(1));
+				} catch (Exception e) {
+					move3.setNode(null);
+				}
+				counter++;
+
+				if (!isBoatOnTheLeftBank()) {
+
+					move1.setByX(-600);
+					move1.setByY(0);
+					move1.play();
+
+					move2.setByX(-600);
+					move2.setByY(0);
+					move2.play();
+
+					move3.setByX(-600);
+					move3.setByY(0);
+					move3.play();
+
+				} else {
+
+					move1.setByX(600);
+					move1.setByY(0);
+					move1.play();
+
+					move2.setByX(600);
+					move2.setByY(0);
+					move2.play();
+
+					move3.setByX(600);
+					move3.setByY(0);
+					move3.play();
+
+				}
+			} else
+				Alert.display("Boat can't sail without the Farmer");
+		}
 
 	}
 
@@ -238,8 +244,10 @@ public class GameEngine implements IRiverCrossingController, Initializable {
 			// Undo button disabled here
 			System.out.println("Can't undo");
 		}
+
 	}
 
+	@Override
 	public void redo() {
 		if (canRedo()) {
 			currentState++;
@@ -253,11 +261,31 @@ public class GameEngine implements IRiverCrossingController, Initializable {
 		}
 	}
 
+	@Override
+	public void saveGame() {
+		invoker.setCommand(saveGame);
+		invoker.executeCommand();
+	}
+
+	@Override
+	public void loadGame() {
+		invoker.setCommand(loadGame);
+		invoker.executeCommand();
+	}
+
+	public void levelOneComplete() {
+		/**
+		 * MessageBox with restart button and nextLevel button if pressed restart call
+		 * restart method if pressd next level do ICrossingStrategy strategy=new
+		 * LevelTwo(); then call newGame(strategy);
+		 **/
+	}
+
+	@Override
+
 	public void initialize(URL location, ResourceBundle resources) {
 		counter = 0;
 
-		newGame(LevelOne);
-		
 		boatList = new ArrayList<String>();
 		leftList = new ArrayList<String>();
 		rightList = new ArrayList<String>();
@@ -271,10 +299,10 @@ public class GameEngine implements IRiverCrossingController, Initializable {
 
 	}
 
-	
 	public void btnAction() {
-		
+
 	}
+
 	public void movePlant() {
 
 		move1.setNode(plant);
@@ -408,18 +436,6 @@ public class GameEngine implements IRiverCrossingController, Initializable {
 	// Test to be removed:
 	public void addRider(ICrosser crosser) {
 		model.addRider(crosser);
-	}
-
-	@Override
-	public void saveGame() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void loadGame() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
