@@ -9,6 +9,11 @@ public class State {
     private boolean isBoatOnTheLeftBank;
     private File file;
     private ICrossingStrategy strategy;
+    private String loadGameName;
+
+    public void setLoadGameName(String loadGameName) {
+        this.loadGameName = loadGameName;
+    }
 
     public State(){
         rightBankCrossers=new ArrayList<>();
@@ -40,7 +45,7 @@ public class State {
     }
 
     public void load(){
-        State loadedState=file.loadGame();
+        State loadedState=file.loadGame(loadGameName);
         this.setStrategy(loadedState.getStrategy());
         this.setLeftBankCrossers(loadedState.getLeftBankCrossers());
         this.setRightBankCrossers(loadedState.getRightBankCrossers());
