@@ -46,7 +46,7 @@ public class GameEngine implements IRiverCrossingController {
         model.clearLeftBank();
         model.clearRightBank();
         model.setNumberOfMoves(0);
-        model.setBoatOnTheLeftBank(true);
+        model.setBoatOnTheLeftBank(false);
         model.setLeftBankCrossers(model.getStrategy().getInitialCrossers());
         currentState=0;
         savedState=0;
