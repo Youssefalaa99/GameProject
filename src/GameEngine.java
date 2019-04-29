@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -18,6 +19,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.animation.*;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 
 public class GameEngine implements IRiverCrossingController, Initializable {
@@ -67,7 +69,7 @@ public class GameEngine implements IRiverCrossingController, Initializable {
 	public void newGame(ICrossingStrategy gameStrategy) {
 		model = new State();
 		model.setStrategy(gameStrategy);
-		model.setLeftBankCrossers(model.getStrategy().getInitialCrossers());
+		model.setRightBankCrossers(model.getStrategy().getInitialCrossers());
 		// Memento setup
 		originator.setState(model.copyState());
 		careTaker.addMemento(originator.saveStateToMemento());
@@ -76,8 +78,10 @@ public class GameEngine implements IRiverCrossingController, Initializable {
 		loadGame = new LoadGame(model);
 		saveGame = new SaveGame(model);
 		// Rendering happens here
-
-		boat.setImage();
+		CharacterImage bufferedImage = new CharacterImage();
+		BufferedImage[] farmerImages = bufferedImage.getCarnivoreOneImages();
+		Image image = SwingFXUtils.toFXImage(farmerImages[0], null);
+		boat.setImage(image);
 		boat.setLayoutX(667);
 		boat.setLayoutY(692);
 
@@ -90,7 +94,7 @@ public class GameEngine implements IRiverCrossingController, Initializable {
 		model.clearRightBank();
 		model.setNumberOfMoves(0);
 		model.setBoatOnTheLeftBank(false);
-		model.setLeftBankCrossers(model.getStrategy().getInitialCrossers());
+		model.setRightBankCrossers(model.getStrategy().getInitialCrossers());
 		currentState = 0;
 		savedState = 0;
 		careTaker.clearMemento();
@@ -284,8 +288,9 @@ public class GameEngine implements IRiverCrossingController, Initializable {
 	@Override
 
 	public void initialize(URL location, ResourceBundle resources) {
-		counter = 0;
 
+		counter = 0;
+		newGame(null);
 		boatList = new ArrayList<String>();
 		leftList = new ArrayList<String>();
 		rightList = new ArrayList<String>();
