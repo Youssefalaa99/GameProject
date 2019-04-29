@@ -6,7 +6,7 @@ public class File {
     }
 
     //Needs parameters to identify which state to load
-    public State loadGame(){
+    public State loadGame(String name){
         State state=new State();
         //Read from file
         return state;

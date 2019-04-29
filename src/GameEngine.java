@@ -290,7 +290,6 @@ public class GameEngine implements IRiverCrossingController, Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 
 		counter = 0;
-		newGame(null);
 		boatList = new ArrayList<String>();
 		leftList = new ArrayList<String>();
 		rightList = new ArrayList<String>();
