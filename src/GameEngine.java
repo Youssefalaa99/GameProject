@@ -3,8 +3,6 @@ import java.util.List;
 public class GameEngine implements IRiverCrossingController {
     private static GameEngine instance;
     private State model;
-    private int currentState=0;
-    private int savedState=0;
     private Originator originator=new Originator();
     private CareTaker careTaker=new CareTaker();
     private Invoker invoker=new Invoker();
@@ -30,12 +28,6 @@ public class GameEngine implements IRiverCrossingController {
         model=new State();
         model.setStrategy(gameStrategy);
         model.setRightBankCrossers(model.getStrategy().getInitialCrossers());
-        //Memento setup
-        originator.setState(model.copyState());
-        careTaker.addMemento(originator.saveStateToMemento());
-        savedState++;
-        //Command setup
-        loadGame=new LoadGame(model);
         saveGame=new SaveGame(model);
         //Rendering happens here
     }
@@ -48,12 +40,8 @@ public class GameEngine implements IRiverCrossingController {
         model.setNumberOfMoves(0);
         model.setBoatOnTheLeftBank(false);
         model.setRightBankCrossers(model.getStrategy().getInitialCrossers());
-        currentState=0;
-        savedState=0;
-        careTaker.clearMemento();
-        originator.setState(model.copyState());
-        careTaker.addMemento(originator.saveStateToMemento());
-        savedState++;
+        careTaker.clearMementoUndoList();
+        careTaker.clearMementoRedoList();
         //Undo & Redo buttons disabled here
     }
 
@@ -96,63 +84,77 @@ public class GameEngine implements IRiverCrossingController {
 
     @Override
     public void doMove(List<ICrosser> crossers, boolean fromLeftToRightBank) {
-        if(canMove(crossers,fromLeftToRightBank)){
-//            if(fromLeftToRightBank==true){
-//                for(ICrosser crosser : crossers){
-//                    model.removeLeftCrosser(crosser);
-//                    model.addRightCrosser(crosser);
-//                }
-//                model.setBoatOnTheLeftBank(false);
-//                model.setNumberOfMoves(model.getNumberOfMoves()+1);
-//            }
-//            else {
-//                for(ICrosser crosser : crossers){
-//                    model.removeRightCrosser(crosser);
-//                    model.addLeftCrosser(crosser);
-//                }
-//                model.setBoatOnTheLeftBank(true);
-//                model.setNumberOfMoves(model.getNumberOfMoves()+1);
-//            }
-
-            //Write code moving here and change model
-
-            originator.setState(model.copyState());
-            careTaker.addMemento(originator.saveStateToMemento());
-            savedState++;
-            currentState++;
+            State modelCopy=new State();
+            model.copyState(modelCopy);
+            originator.setState(modelCopy);
+            careTaker.addMementoUndoList(originator.saveStateToMemento());
+            if(!careTaker.getMementoRedoList().isEmpty()){
+                careTaker.clearMementoRedoList();
+            }
             //Undo button set enabled here
-        }
-        else {
 
-        }
+            if(fromLeftToRightBank==true){
+                for(ICrosser crosser : crossers){
+                    model.removeLeftCrosser(crosser);
+                }
 
+            }
+            else {
+                for(ICrosser crosser : crossers){
+                    model.removeRightCrosser(crosser);
+                }
+
+            }
+            if (canMove(crossers,fromLeftToRightBank)){
+                if(fromLeftToRightBank==true){
+                    for (ICrosser crosser : crossers){
+                        model.addRightCrosser(crosser);
+                    }
+                    model.setBoatOnTheLeftBank(false);
+                    model.setNumberOfMoves(model.getNumberOfMoves()+1);
+                }
+                else{
+                    for (ICrosser crosser : crossers){
+                        model.addLeftCrosser(crosser);
+                    }
+                    model.setBoatOnTheLeftBank(true);
+                    model.setNumberOfMoves(model.getNumberOfMoves()+1);
+                }
+
+                //Write code moving here and change model
+            }
     }
 
     @Override
     public boolean canUndo() {
-        if(currentState >= 1){
-            return true;
+        if(careTaker.getMementoUndoList().isEmpty()){
+            return false;
         }
         else {
-            return false;
+            return true;
         }
     }
 
     @Override
     public boolean canRedo() {
-        if((savedState-1) > currentState){
-            return true;
+        if(careTaker.getMementoRedoList().isEmpty()){
+            return false;
+            //Might use it later(savedState-1) > currentState, true
         }
         else {
-            return false;
+            return true;
         }
     }
 
     @Override
     public void undo() {
         if(canUndo()){
-            currentState--;
-            model=originator.getStateFromMemento(careTaker.getMemento(currentState));
+            State state=originator.getStateFromMemento(careTaker.getMementoFromUndoList());
+            State modelCopy=new State();
+            model.copyState(modelCopy);
+            originator.setState(modelCopy);
+            careTaker.addMementoRedoList(originator.saveStateToMemento());
+            model=state;
             //Rendering new view in scene builder
             //Redo button enabled here
             System.out.println("Undo done");
@@ -167,8 +169,12 @@ public class GameEngine implements IRiverCrossingController {
     @Override
     public void redo() {
         if(canRedo()){
-            currentState++;
-            model=originator.getStateFromMemento(careTaker.getMemento(currentState));
+            State state=originator.getStateFromMemento(careTaker.getMementoFromRedoList());
+            State modelCopy=new State();
+            model.copyState(modelCopy);
+            originator.setState(modelCopy);
+            careTaker.addMementoUndoList(originator.saveStateToMemento());
+            model=state;
             //Rendering new view in scene builder
             //Undo button enabled here
             System.out.println("Redo done");
@@ -187,6 +193,8 @@ public class GameEngine implements IRiverCrossingController {
 
     @Override
     public void loadGame() {
+        model=new State();
+        loadGame=new LoadGame(model);
         invoker.setCommand(loadGame);
         invoker.executeCommand();
     }

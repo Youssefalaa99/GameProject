@@ -11,7 +11,7 @@ public class Game {
         ArrayList<ICrosser> leftlist=new ArrayList<>();
         ArrayList<ICrosser> rightlist=new ArrayList<>();
         ArrayList<ICrosser> boatlist=new ArrayList<>();
-        CrosserFactory factory=new CrosserFactory();
+        //CrosserFactory factory=new CrosserFactory();
 //        ICrosser famer1=factory.createCrosseer("F1");
 //        ICrosser famer2=factory.createCrosseer("F2");
 //        rightlist.add(factory.createCrosseer("H"));
@@ -27,27 +27,27 @@ public class Game {
 
 
         //Test GameEngine
-//        GameEngine engine=GameEngine.getInstance();
-//        LevelOne one=new LevelOne();
-//        engine.newGame(one);
-//        engine.printState();
-//        List<ICrosser> crossers=engine.getCrossersOnLeftBank();
-//        boatlist.add(crossers.get(0));
-//        boatlist.add(crossers.get(2));
-//        engine.removeLeft(crossers.get(0));
-//        engine.removeLeft(crossers.get(1));
-//        engine.doMove(boatlist,true);
-//        engine.printState();
-//        engine.undo();
-//        engine.printState();
-//        engine.undo();
-//        engine.printState();
-//        engine.redo();
-//        engine.printState();
-//        engine.redo();
-//        engine.printState();
+        GameEngine engine=GameEngine.getInstance();
+        LevelOne one=new LevelOne();
+        engine.newGame(one);
+        List<ICrosser> crossers=engine.getCrossersOnRightBank();
+        boatlist.add(crossers.get(0));
+        boatlist.add(crossers.get(2));
+        engine.removeRight(crossers.get(0));
+        engine.removeRight(crossers.get(1));
+        engine.printState();
+        engine.doMove(boatlist,false);
+        engine.printState();
+        engine.undo();
+        engine.printState();
+        engine.undo();
+        engine.printState();
+        engine.redo();
+        engine.printState();
+        engine.redo();
+        engine.printState();
 
-        //Test Memnto
+        //Test Memento
 //        Originator originator=new Originator();
 //        CareTaker careTaker=new CareTaker();
 //        ArrayList<ICrosser> leftList=new ArrayList<>();
@@ -70,7 +70,7 @@ public class Game {
 //        state1.setRightBankCrossers(rightList);
 //        state1.setBoatRiders(boatList);
 //        originator.setState(state1);
-//        careTaker.addMemento(originator.saveStateToMemento());
+//        careTaker.addMementoUndoList(originator.saveStateToMemento());
 //        System.out.println(originator.getState().toString());
 //        rightList2.add(famer);
 //        rightList2.add(herb);
@@ -81,11 +81,23 @@ public class Game {
 //        state2.setNumberOfMoves(1);
 //        state2.setBoatOnTheLeftBank(false);
 //        originator.setState(state2);
-//        careTaker.addMemento(originator.saveStateToMemento());
+//        careTaker.addMementoRedoList(originator.saveStateToMemento());
 //        System.out.println(originator.getState().toString());
 //        System.out.println("Undo");
-//        originator.getStateFromMemento(careTaker.getMemento(0));
+//        originator.getStateFromMemento(careTaker.getMementoFromUndoList());
 //        System.out.println(originator.getState().toString());
+//        System.out.println("Redo");
+//        originator.getStateFromMemento(careTaker.getMementoFromRedoList());
+//        System.out.println(originator.getState().toString());
+//        System.out.println("Redo again");
+//        try{
+//            originator.getStateFromMemento(careTaker.getMementoFromRedoList());
+//            System.out.println(originator.getState().toString());
+//        }
+//        catch (Exception e){
+//            System.out.println(e);
+//        }
+
 
 
 

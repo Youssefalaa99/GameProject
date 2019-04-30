@@ -130,8 +130,7 @@ public class State {
         rightBankCrossers.clear();
     }
 
-    public State copyState(){
-        State state=new State();
+    public State copyState(State state){
         List<ICrosser> leftCrossers=new ArrayList<>();
         List<ICrosser> rightCrossers=new ArrayList<>();
         List<ICrosser> boatRiders=new ArrayList<>();
