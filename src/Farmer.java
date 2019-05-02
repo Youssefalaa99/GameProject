@@ -2,7 +2,7 @@ import java.awt.image.BufferedImage;
 
 public class Farmer implements ICrosser {
 
-    private double weight;
+    private double weight=0.0;
     private BufferedImage[] gif;
     private String lbl;
     private final int eatingRank=5;

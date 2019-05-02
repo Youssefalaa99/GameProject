@@ -11,6 +11,8 @@ public class Game {
         ArrayList<ICrosser> leftlist=new ArrayList<>();
         ArrayList<ICrosser> rightlist=new ArrayList<>();
         ArrayList<ICrosser> boatlist=new ArrayList<>();
+
+
         //CrosserFactory factory=new CrosserFactory();
 //        ICrosser famer1=factory.createCrosseer("F1");
 //        ICrosser famer2=factory.createCrosseer("F2");
@@ -25,9 +27,14 @@ public class Game {
 //        levelOne.isValid(rightlist,leftlist,boatlist);
 
 
-
-        //Test GameEngine
         GameEngine engine=GameEngine.getInstance();
+        LevelOne one=new LevelOne();
+        engine.newGame(one);
+        engine.saveGame();
+        engine.loadGame();
+        engine.printState();
+        //Test GameEngine
+       /* GameEngine engine=GameEngine.getInstance();
         LevelOne one=new LevelOne();
         engine.newGame(one);
         List<ICrosser> crossers=engine.getCrossersOnRightBank();
@@ -46,7 +53,7 @@ public class Game {
         engine.printState();
         engine.redo();
         engine.printState();
-
+*/
         //Test Memento
 //        Originator originator=new Originator();
 //        CareTaker careTaker=new CareTaker();

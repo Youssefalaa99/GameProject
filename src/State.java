@@ -7,13 +7,18 @@ public class State {
     private List<ICrosser> boatRiders;
     private int numberOfMoves;
     private boolean isBoatOnTheLeftBank;
-    private File file;
+    private xmlFile file;
     private ICrossingStrategy strategy;
-    private String loadGameName;
+    private String userName;
 
-    public void setLoadGameName(String loadGameName) {
-        this.loadGameName = loadGameName;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
+
+    public String getUserName(){
+        return userName;
+    }
+
 
     public State(){
         rightBankCrossers=new ArrayList<>();
@@ -21,7 +26,8 @@ public class State {
         boatRiders=new ArrayList<>();
         isBoatOnTheLeftBank=false;
         numberOfMoves=0;
-        file=new File();
+        userName="";
+        file=new xmlFile();
     }
 
     public ICrossingStrategy getStrategy() {
@@ -33,19 +39,13 @@ public class State {
     }
 
     public void save(){
-        if(strategy instanceof LevelOne){
-            System.out.println("Saving level one");
-            file.saveGame(this,"LevelOne");
-        }
-        else if(strategy instanceof LevelTwo){
-            System.out.println("Saving level two");
-            file.saveGame(this,"LevelTwo");
-        }
+        file.saveGame(this);
+
 
     }
 
     public void load(){
-        State loadedState=file.loadGame(loadGameName);
+        State loadedState=file.loadGame("");
         this.setStrategy(loadedState.getStrategy());
         this.setLeftBankCrossers(loadedState.getLeftBankCrossers());
         this.setRightBankCrossers(loadedState.getRightBankCrossers());
