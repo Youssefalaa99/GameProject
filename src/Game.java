@@ -13,6 +13,8 @@ public class Game {
         ArrayList<ICrosser> boatlist=new ArrayList<>();
 
 
+
+
         //CrosserFactory factory=new CrosserFactory();
 //        ICrosser famer1=factory.createCrosseer("F1");
 //        ICrosser famer2=factory.createCrosseer("F2");
@@ -27,33 +29,33 @@ public class Game {
 //        levelOne.isValid(rightlist,leftlist,boatlist);
 
 
-        GameEngine engine=GameEngine.getInstance();
-        LevelOne one=new LevelOne();
-        engine.newGame(one);
-        engine.saveGame();
-        engine.loadGame();
-        engine.printState();
+//        GameEngine engine=GameEngine.getInstance();
+//        LevelTwo one=new LevelTwo();
+//        engine.newGame(one);
+//        engine.saveGame();
+//        engine.loadGame();
+//        engine.printState();
         //Test GameEngine
-       /* GameEngine engine=GameEngine.getInstance();
-        LevelOne one=new LevelOne();
-        engine.newGame(one);
-        List<ICrosser> crossers=engine.getCrossersOnRightBank();
-        boatlist.add(crossers.get(0));
-        boatlist.add(crossers.get(2));
-        engine.removeRight(crossers.get(0));
-        engine.removeRight(crossers.get(1));
-        engine.printState();
-        engine.doMove(boatlist,false);
-        engine.printState();
-        engine.undo();
-        engine.printState();
-        engine.undo();
-        engine.printState();
-        engine.redo();
-        engine.printState();
-        engine.redo();
-        engine.printState();
-*/
+//        GameEngine engine=GameEngine.getInstance();
+//        LevelOne one=new LevelOne();
+//        engine.newGame(one);
+//        List<ICrosser> crossers=engine.getCrossersOnRightBank();
+//        boatlist.add(crossers.get(0));
+//        boatlist.add(crossers.get(2));
+//        engine.removeRight(crossers.get(0));
+//        engine.removeRight(crossers.get(1));
+//        engine.printState();
+//        engine.doMove(boatlist,false);
+//        engine.printState();
+//        engine.undo();
+//        engine.printState();
+//        engine.undo();
+//        engine.printState();
+//        engine.redo();
+//        engine.printState();
+//        engine.redo();
+//        engine.printState();
+
         //Test Memento
 //        Originator originator=new Originator();
 //        CareTaker careTaker=new CareTaker();

@@ -29,6 +29,9 @@ public class GameEngine implements IRiverCrossingController {
         model.setStrategy(gameStrategy);
         model.setRightBankCrossers(model.getStrategy().getInitialCrossers());
         saveGame=new SaveGame(model);
+        State modelCopy=new State();
+        model.copyState(modelCopy);
+        originator.setState(modelCopy);
         //Rendering happens here
     }
 
@@ -42,6 +45,9 @@ public class GameEngine implements IRiverCrossingController {
         model.setRightBankCrossers(model.getStrategy().getInitialCrossers());
         careTaker.clearMementoUndoList();
         careTaker.clearMementoRedoList();
+        State modelCopy=new State();
+        model.copyState(modelCopy);
+        originator.setState(modelCopy);
         //Undo & Redo buttons disabled here
     }
 
@@ -84,32 +90,18 @@ public class GameEngine implements IRiverCrossingController {
 
     @Override
     public void doMove(List<ICrosser> crossers, boolean fromLeftToRightBank) {
-            State modelCopy=new State();
-            model.copyState(modelCopy);
-            originator.setState(modelCopy);
-            careTaker.addMementoUndoList(originator.saveStateToMemento());
-            if(!careTaker.getMementoRedoList().isEmpty()){
-                careTaker.clearMementoRedoList();
-            }
             //Undo button set enabled here
 
-            if(fromLeftToRightBank==true){
-                for(ICrosser crosser : crossers){
-                    model.removeLeftCrosser(crosser);
-                }
-
-            }
-            else {
-                for(ICrosser crosser : crossers){
-                    model.removeRightCrosser(crosser);
-                }
-
-            }
             if (canMove(crossers,fromLeftToRightBank)){
+                careTaker.addMementoUndoList(originator.saveStateToMemento());
+                if(!careTaker.getMementoRedoList().isEmpty()){
+                careTaker.clearMementoRedoList();
+                }
                 if(fromLeftToRightBank==true){
                     for (ICrosser crosser : crossers){
                         model.addRightCrosser(crosser);
                     }
+                    model.clearBoatRiders();
                     model.setBoatOnTheLeftBank(false);
                     model.setNumberOfMoves(model.getNumberOfMoves()+1);
                 }
@@ -117,12 +109,17 @@ public class GameEngine implements IRiverCrossingController {
                     for (ICrosser crosser : crossers){
                         model.addLeftCrosser(crosser);
                     }
+                    model.clearBoatRiders();
                     model.setBoatOnTheLeftBank(true);
                     model.setNumberOfMoves(model.getNumberOfMoves()+1);
                 }
+                State modelCopy=new State();
+                model.copyState(modelCopy);
+                originator.setState(modelCopy);
 
                 //Write code moving here and change model
             }
+
     }
 
     @Override
@@ -149,11 +146,8 @@ public class GameEngine implements IRiverCrossingController {
     @Override
     public void undo() {
         if(canUndo()){
-            State state=originator.getStateFromMemento(careTaker.getMementoFromUndoList());
-            State modelCopy=new State();
-            model.copyState(modelCopy);
-            originator.setState(modelCopy);
             careTaker.addMementoRedoList(originator.saveStateToMemento());
+            State state=originator.getStateFromMemento(careTaker.getMementoFromUndoList());
             model=state;
             //Rendering new view in scene builder
             //Redo button enabled here
@@ -169,11 +163,8 @@ public class GameEngine implements IRiverCrossingController {
     @Override
     public void redo() {
         if(canRedo()){
-            State state=originator.getStateFromMemento(careTaker.getMementoFromRedoList());
-            State modelCopy=new State();
-            model.copyState(modelCopy);
-            originator.setState(modelCopy);
             careTaker.addMementoUndoList(originator.saveStateToMemento());
+            State state=originator.getStateFromMemento(careTaker.getMementoFromRedoList());
             model=state;
             //Rendering new view in scene builder
             //Undo button enabled here
