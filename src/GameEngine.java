@@ -184,7 +184,6 @@ public class GameEngine implements IRiverCrossingController {
 
     @Override
     public void loadGame() {
-        model=new State();
         loadGame=new LoadGame(model);
         invoker.setCommand(loadGame);
         invoker.executeCommand();

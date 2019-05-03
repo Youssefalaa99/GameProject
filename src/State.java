@@ -26,7 +26,6 @@ public class State {
         boatRiders=new ArrayList<>();
         isBoatOnTheLeftBank=false;
         numberOfMoves=0;
-        userName="";
         file=new xmlFile();
     }
 
@@ -40,12 +39,10 @@ public class State {
 
     public void save(){
         file.saveGame(this);
-
-
     }
 
     public void load(){
-        State loadedState=file.loadGame("");
+        State loadedState=file.loadGame(userName);
         this.setStrategy(loadedState.getStrategy());
         this.setLeftBankCrossers(loadedState.getLeftBankCrossers());
         this.setRightBankCrossers(loadedState.getRightBankCrossers());
