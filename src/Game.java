@@ -36,16 +36,20 @@ public class Game {
 //        engine.loadGame();
 //        engine.printState();
         //Test GameEngine
-//        GameEngine engine=GameEngine.getInstance();
-//        LevelOne one=new LevelOne();
-//        engine.newGame(one);
-//        List<ICrosser> crossers=engine.getCrossersOnRightBank();
+        GameEngine engine=GameEngine.getInstance();
+        LevelOne one=new LevelOne();
+        engine.newGame(one);
+        List<ICrosser> crossers=engine.getCrossersOnRightBank();
+        engine.setUsername("Youssef");
+        engine.printState();
+        engine.loadGame();
+        engine.printState();
 //        boatlist.add(crossers.get(0));
 //        boatlist.add(crossers.get(2));
 //        engine.removeRight(crossers.get(0));
 //        engine.removeRight(crossers.get(1));
-//        engine.printState();
 //        engine.doMove(boatlist,false);
+//        engine.saveGame();
 //        engine.printState();
 //        engine.undo();
 //        engine.printState();

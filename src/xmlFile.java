@@ -126,7 +126,7 @@ public class xmlFile {
             leftBankCrosserslist=state.getLeftBankCrossers();
             Iterator iterator2 = leftBankCrosserslist.iterator();
             while(iterator2.hasNext()) {
-                    ICrosser crosser=(ICrosser) iterator.next();
+                    ICrosser crosser=(ICrosser) iterator2.next();
                     if (crosser instanceof Farmer) {
                         x = Double.toString(crosser.getWeight());
 

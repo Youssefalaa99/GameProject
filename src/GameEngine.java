@@ -219,4 +219,8 @@ public class GameEngine implements IRiverCrossingController {
     public void addRider(ICrosser crosser){
         model.addRider(crosser);
     }
+    //Test to be removed
+    public void setUsername(String username){
+        model.setUserName(username);
+    }
 }
