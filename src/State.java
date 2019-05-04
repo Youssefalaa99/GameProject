@@ -7,7 +7,7 @@ public class State {
     private List<ICrosser> boatRiders;
     private int numberOfMoves;
     private boolean isBoatOnTheLeftBank;
-    private xmlFile file;
+    private XmlFile file;
     private ICrossingStrategy strategy;
     private String userName;
 
@@ -26,7 +26,7 @@ public class State {
         boatRiders=new ArrayList<>();
         isBoatOnTheLeftBank=false;
         numberOfMoves=0;
-        file=new xmlFile();
+        file=new XmlFile();
     }
 
     public ICrossingStrategy getStrategy() {

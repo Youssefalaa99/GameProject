@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class xmlFile {
+public class XmlFile {
 
     private int temp;
     private String x;
