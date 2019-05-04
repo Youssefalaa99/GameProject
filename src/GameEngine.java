@@ -184,12 +184,14 @@ public class GameEngine implements IRiverCrossingController {
 
     @Override
     public void loadGame() {
+        model=new State();
         loadGame=new LoadGame(model);
         invoker.setCommand(loadGame);
         invoker.executeCommand();
         careTaker.clearMementoRedoList();
         careTaker.clearMementoUndoList();
         originator.setState(model);
+        model.setRightBankCrossers(model.getStrategy().getInitialCrossers());
     }
 
     public void levelOneComplete(){
