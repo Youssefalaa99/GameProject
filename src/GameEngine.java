@@ -187,6 +187,9 @@ public class GameEngine implements IRiverCrossingController {
         loadGame=new LoadGame(model);
         invoker.setCommand(loadGame);
         invoker.executeCommand();
+        careTaker.clearMementoRedoList();
+        careTaker.clearMementoUndoList();
+        originator.setState(model);
     }
 
     public void levelOneComplete(){
