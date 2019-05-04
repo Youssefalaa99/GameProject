@@ -12,6 +12,14 @@ public class Game {
         ArrayList<ICrosser> rightlist=new ArrayList<>();
         ArrayList<ICrosser> boatlist=new ArrayList<>();
 
+        XmlFile f=new XmlFile();
+
+        String[] str=f.getUserNames();
+        System.out.println(str[0]);
+
+        f.removePlayer("");
+
+
 
 
 

@@ -23,7 +23,7 @@ public class UsernameBox {
         Scene scene=new Scene(vBox,600,300);
         button.setOnAction(event -> {
             if(textField.getText().isEmpty()){
-                Alert.display("Please Enter your name");
+//                Alert.display("Please Enter your name");
             }
             else {
                 username=textField.getText();

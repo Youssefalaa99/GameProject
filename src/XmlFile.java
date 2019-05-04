@@ -347,5 +347,82 @@ public class XmlFile {
         System.out.println(state.toString());
         return state;
     }
+
+
+    public String[] getUserNames(){
+
+    String[] userNames=new String[50];
+
+    try{
+
+        File inputFile = new File("./src//SavedGames.xml");
+        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+        Document doc = dBuilder.parse(inputFile);
+        doc.getDocumentElement().normalize();
+        NodeList list = doc.getElementsByTagName("Player");
+        ////////////////////////
+        for (temp = 0; temp < list.getLength(); temp++) {
+
+            Node player = list.item(temp);
+            NamedNodeMap attr = player.getAttributes();
+            Node nodeAttr = attr.getNamedItem("UserName");
+            userNames[temp]=nodeAttr.getNodeValue();
+
+        }
+
     }
+
+    catch (Exception e){
+        e.printStackTrace();
+    }
+
+    return userNames;
+
+    }
+
+public void removePlayer(String userName){
+
+        try{
+
+    File inputFile = new File("./src//SavedGames.xml");
+    DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+    DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+    Document doc = docBuilder.parse(inputFile);
+    doc.getDocumentElement().normalize();
+
+    NodeList list = doc.getElementsByTagName("Player");
+
+    for (temp = 0; temp < list.getLength(); temp++) {
+
+        Node player = list.item(temp);
+        NamedNodeMap attr = player.getAttributes();
+        Node nodeAttr = attr.getNamedItem("UserName");
+        if (userName.equals(nodeAttr.getTextContent())) {
+            Node parent = player.getParentNode();
+            parent.removeChild(player);
+            break;
+        }
+
+    }
+
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer = transformerFactory.newTransformer();
+        DOMSource source = new DOMSource(doc);
+        System.out.println("-----------Deleted-----------");
+        StreamResult consoleResult = new StreamResult(inputFile);
+        transformer.transform(source, consoleResult);
+    }
+
+        catch (Exception e){
+            e.printStackTrace();
+        }
+
+
+}
+}
+
+
+
+
 
