@@ -26,22 +26,22 @@ public class CharacterImage {
 
     public CharacterImage(){
         try{
-            farmerOneLeft= ImageIO.read(new FileInputStream("Farmer.jpg"));
-            farmerOneRight=ImageIO.read(new FileInputStream("Farmer.jpg"));
-            farmerTwoLeft=ImageIO.read(new FileInputStream("Farmer.jpg"));
-            farmerTwoRight=ImageIO.read(new FileInputStream("Farmer.jpg"));
-            farmerThreeLeft=ImageIO.read(new FileInputStream("Farmer.jpg"));
-            farmerThreeRight=ImageIO.read(new FileInputStream("Farmer.jpg"));
-            farmerFourLeft=ImageIO.read(new FileInputStream("Farmer.jpg"));
-            farmerFourRight=ImageIO.read(new FileInputStream("Farmer.jpg"));
-            carnivoreOneLeft=ImageIO.read(new FileInputStream("Carnivor.jpg"));
-            carnivoreOneRight=ImageIO.read(new FileInputStream("Carnivor.jpg"));
-            carnivoreTwoLeft=ImageIO.read(new FileInputStream("Carnivor.jpg"));
-            carnivoreTwoRight=ImageIO.read(new FileInputStream("Carnivor.jpg"));
-            herbivoreOneLeft=ImageIO.read(new FileInputStream("herbivore.png"));
-            herbivoreOneRight=ImageIO.read(new FileInputStream("herbivore.png"));
-            herbivoreTwoLeft=ImageIO.read(new FileInputStream("herbivore.png"));
-            herbivoreTwoRight=ImageIO.read(new FileInputStream("herbivore.png"));
+            farmerOneLeft= ImageIO.read(new FileInputStream("Farmer_Left.jpg"));
+            farmerOneRight=ImageIO.read(new FileInputStream("Farmer_Right.jpg"));
+            farmerTwoLeft=ImageIO.read(new FileInputStream("Farmer1_Left.png"));
+            farmerTwoRight=ImageIO.read(new FileInputStream("Farmer1_Right.png"));
+            farmerThreeLeft=ImageIO.read(new FileInputStream("Farmer2.png"));
+            farmerThreeRight=ImageIO.read(new FileInputStream("Farmer2.png"));
+            farmerFourLeft=ImageIO.read(new FileInputStream("Farmer3_Left.png"));
+            farmerFourRight=ImageIO.read(new FileInputStream("Farmer3_Right.png"));
+            carnivoreOneLeft=ImageIO.read(new FileInputStream("Carnivor1_Left.png"));
+            carnivoreOneRight=ImageIO.read(new FileInputStream("Carnivor1_Right.png"));
+            carnivoreTwoLeft=ImageIO.read(new FileInputStream("Carnivor2_Left.jpg"));
+            carnivoreTwoRight=ImageIO.read(new FileInputStream("Carnivor2_Right.jpg"));
+            herbivoreOneLeft=ImageIO.read(new FileInputStream("herbivore1_Left.png"));
+            herbivoreOneRight=ImageIO.read(new FileInputStream("herbivore1_Right.png"));
+            herbivoreTwoLeft=ImageIO.read(new FileInputStream("herbivore2_Left.png"));
+            herbivoreTwoRight=ImageIO.read(new FileInputStream("herbivore2_Right.png"));
             plantLeft=ImageIO.read(new FileInputStream("Carrot.png"));
             plantRight=ImageIO.read(new FileInputStream("Carrot.png"));
 

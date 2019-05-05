@@ -1,12 +1,8 @@
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.awt.image.BufferedImage;
-import java.io.File;
+
 import java.io.IOException;
 import java.net.URL;
-import javafx.util.Duration;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -14,49 +10,64 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
-import javafx.animation.*;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
+import javafx.scene.control.Label;
 
 public class GameEngine implements IRiverCrossingController, Initializable {
-
-	private ArrayList<String> boatList;
-	private ArrayList<String> leftList;
-	private ArrayList<String> rightList;
+	private Animation ani;
 	private static GameEngine instance;
 	private State model;
-	private int currentState = 0;
-	private int savedState = 0;
+	private String username;
 	private Originator originator = new Originator();
 	private CareTaker careTaker = new CareTaker();
 	private Invoker invoker = new Invoker();
 	private LoadGame loadGame;
 	private SaveGame saveGame;
+	private Image image;
 	@FXML
-	private ImageView boat = new ImageView();
-
-	private ImageView plant;
-
-	private ImageView farmer;
-
-	private ImageView herbi;
-
-	private ImageView carni;
-
+	private Label scoreLabel;
+	@FXML
+	private Button startGame;
+	@FXML
+	private Button resetBtn;
+	@FXML
+	private Button exitBtn;
+	@FXML
+	private ImageView boatImg;
+	@FXML
+	private ImageView plantImg;
+	@FXML
+	private ImageView farmerImg;
+	@FXML
+	private ImageView herbiImg;
+	@FXML
+	private ImageView carniImg;
 	@FXML
 	private Button moveBtn;
-
-	private String[] imgArray = new String[] { "Farmer", "Plant", "Boat", "Herbi", "Carni" };
-
-	private TranslateTransition move1;
-	private TranslateTransition move2;
-	private TranslateTransition move3;
-
-	private int counter;
+	@FXML
+	private Button undoBtn;
+	@FXML
+	private Button redoBtn;
+	@FXML
+	private ImageView farmer1Img;
+	@FXML
+	private ImageView farmer2Img;
+	@FXML
+	private ImageView farmer3Img;
+	@FXML
+	private ImageView farmer4Img;
+	@FXML
+	private ImageView animalImg;
+	@FXML
+	private Button instBtn;
+	@FXML
+	private Button saveBtn;
+	private ICrossingStrategy thisGameStartegy;
 
 	public static synchronized GameEngine getInstance() {
 		if (instance == null)
@@ -67,43 +78,54 @@ public class GameEngine implements IRiverCrossingController, Initializable {
 
 	@Override
 	public void newGame(ICrossingStrategy gameStrategy) {
+		thisGameStartegy = gameStrategy;
 		model = new State();
 		model.setStrategy(gameStrategy);
 		model.setRightBankCrossers(model.getStrategy().getInitialCrossers());
-		// Memento setup
-		originator.setState(model.copyState());
-		careTaker.addMemento(originator.saveStateToMemento());
-		savedState++;
-		// Command setup
-		loadGame = new LoadGame(model);
 		saveGame = new SaveGame(model);
+		State modelCopy = new State();
+		model.copyState(modelCopy);
+		originator.setState(modelCopy);
+		ani = new Animation(model);
 		// Rendering happens here
-		CharacterImage bufferedImage = new CharacterImage();
-		BufferedImage[] farmerImages = bufferedImage.getCarnivoreOneImages();
-		Image image = SwingFXUtils.toFXImage(farmerImages[0], null);
-		boat.setImage(image);
-		boat.setLayoutX(667);
-		boat.setLayoutY(692);
-
+		redoBtn.setDisable(true);
+		undoBtn.setDisable(true);
+		Tooltip.install(farmerImg, new Tooltip("Character : Farmer \n Eating Rank : Non"));
+		Tooltip.install(plantImg, new Tooltip("Character : Plant \n Eating Rank : 0"));
+		Tooltip.install(herbiImg, new Tooltip("Character : Herbivorous \n Eating Rank : 1"));
+		Tooltip.install(carniImg, new Tooltip("Character : Carnivorous \n Eating Rank : 2"));
+		Tooltip.install(farmer1Img, new Tooltip("Character : Farmer 1 \n Weight : 90"));
+		Tooltip.install(farmer2Img, new Tooltip("Character : Farmer 2 \n Weight : 80"));
+		Tooltip.install(farmer3Img, new Tooltip("Character : Farmer 3 \n Weight : 60"));
+		Tooltip.install(farmer4Img, new Tooltip("Character : Farmer 4 \n Weight : 40"));
+		Tooltip.install(animalImg, new Tooltip("Character : Animal \n Weight : 20"));
+		RenderImg(model.getRightBankCrossers(), model.getLeftBankCrossers(), model.getBoatRiders(),
+				model.getIsBoatOnTheLeftBank());
 	}
 
 	@Override
 	public void resetGame() {
+
 		model.clearBoatRiders();
 		model.clearLeftBank();
 		model.clearRightBank();
 		model.setNumberOfMoves(0);
 		model.setBoatOnTheLeftBank(false);
 		model.setRightBankCrossers(model.getStrategy().getInitialCrossers());
-		currentState = 0;
-		savedState = 0;
-		careTaker.clearMemento();
-		originator.setState(model.copyState());
-		careTaker.addMemento(originator.saveStateToMemento());
-		savedState++;
-		// Undo & Redo buttons disabled here
+		careTaker.clearMementoUndoList();
+		careTaker.clearMementoRedoList();
+		State modelCopy = new State();
+		model.copyState(modelCopy);
+		originator.setState(modelCopy);
+		redoBtn.setDisable(true);
+		undoBtn.setDisable(true);
+		scoreLabel.setText("Score : " + getNumberOfSails());
+		RenderImg(model.getRightBankCrossers(), model.getLeftBankCrossers(), model.getBoatRiders(),
+				model.getIsBoatOnTheLeftBank());
 	}
 
+	
+	
 	@Override
 	public String[] getInstructions() {
 		return model.getStrategy().getInstructions();
@@ -119,6 +141,10 @@ public class GameEngine implements IRiverCrossingController, Initializable {
 		return model.getLeftBankCrossers();
 	}
 
+	public List<ICrosser> getCrossersOnBoat() {
+		return model.getBoatRiders();
+	}
+
 	@Override
 	public boolean isBoatOnTheLeftBank() {
 		return model.getIsBoatOnTheLeftBank();
@@ -132,289 +158,568 @@ public class GameEngine implements IRiverCrossingController, Initializable {
 	@Override
 	public boolean canMove(List<ICrosser> crossers, boolean fromLeftToRightBank) {
 		if (model.getStrategy().isValid(getCrossersOnRightBank(), getCrossersOnLeftBank(), crossers)) {
-			System.out.println("Can move");
 			return true;
 		} else {
-			System.out.println("Can't move");
 			return false;
 		}
+	}
+
+	public void Instructions() {
+		InstructionsBox.displayInstructions(getInstructions());
 	}
 
 	@Override
 	public void doMove(List<ICrosser> crossers, boolean fromLeftToRightBank) {
 		if (canMove(crossers, fromLeftToRightBank)) {
-			if (canMove(crossers, fromLeftToRightBank)) {
-//	            if(fromLeftToRightBank==true){
-//	                for(ICrosser crosser : crossers){
-//	                    model.removeLeftCrosser(crosser);
-//	                    model.addRightCrosser(crosser);
-//	                }
-//	                model.setBoatOnTheLeftBank(false);
-//	                model.setNumberOfMoves(model.getNumberOfMoves()+1);
-//	            }
-//	            else {
-//	                for(ICrosser crosser : crossers){
-//	                    model.removeRightCrosser(crosser);
-//	                    model.addLeftCrosser(crosser);
-//	                }
-//	                model.setBoatOnTheLeftBank(true);
-//	                model.setNumberOfMoves(model.getNumberOfMoves()+1);
-//	            }
-
-				// Write code moving here and change model
-
-				originator.setState(model.copyState());
-				careTaker.addMemento(originator.saveStateToMemento());
-				savedState++;
-				currentState++;
-				// Undo button set enabled here
-			} else {
-
+			careTaker.addMementoUndoList(originator.saveStateToMemento());
+			if (!careTaker.getMementoRedoList().isEmpty()) {
+				careTaker.clearMementoRedoList();
 			}
-
-			if (boatList.contains("Farmer")) {
-				try {
-
-					move1.setNode(boat);
-					move2.setNode(getinBoat(0));
-					move3.setNode(getinBoat(1));
-				} catch (Exception e) {
-					move3.setNode(null);
+			undoBtn.setDisable(false);
+			if (fromLeftToRightBank == true) {
+				for (ICrosser crosser : crossers) {
+					model.addRightCrosser(crosser);
 				}
-				counter++;
-
-				if (!isBoatOnTheLeftBank()) {
-
-					move1.setByX(-600);
-					move1.setByY(0);
-					move1.play();
-
-					move2.setByX(-600);
-					move2.setByY(0);
-					move2.play();
-
-					move3.setByX(-600);
-					move3.setByY(0);
-					move3.play();
-
-				} else {
-
-					move1.setByX(600);
-					move1.setByY(0);
-					move1.play();
-
-					move2.setByX(600);
-					move2.setByY(0);
-					move2.play();
-
-					move3.setByX(600);
-					move3.setByY(0);
-					move3.play();
-
+				model.clearBoatRiders();
+				model.setBoatOnTheLeftBank(false);
+				model.setNumberOfMoves(model.getNumberOfMoves() + 1);
+			} else {
+				for (ICrosser crosser : crossers) {
+					model.addLeftCrosser(crosser);
 				}
-			} else
-				Alert.display("Boat can't sail without the Farmer");
+				model.clearBoatRiders();
+				model.setBoatOnTheLeftBank(true);
+				model.setNumberOfMoves(model.getNumberOfMoves() + 1);
+			}
+			State modelCopy = new State();
+			model.copyState(modelCopy);
+			originator.setState(modelCopy);
+			RenderImg(model.getRightBankCrossers(), model.getLeftBankCrossers(), model.getBoatRiders(),
+					model.getIsBoatOnTheLeftBank());
+
+			scoreLabel.setText("Score : " + getNumberOfSails());
 		}
+		if (model.getLeftBankCrossers().size() == 5 && model.getStrategy() instanceof LevelTwo)
+			levelTwoComplete();
+		if (model.getLeftBankCrossers().size() == 4 && model.getStrategy() instanceof LevelOne)
+			levelOneComplete();
 
 	}
 
 	@Override
 	public boolean canUndo() {
-		if (currentState >= 1) {
-			return true;
-		} else {
+		if (careTaker.getMementoUndoList().isEmpty()) {
 			return false;
+		} else {
+			return true;
 		}
 	}
 
 	@Override
 	public boolean canRedo() {
-		if ((savedState - 1) > currentState) {
-			return true;
-		} else {
+		if (careTaker.getMementoRedoList().isEmpty()) {
 			return false;
+			// Might use it later(savedState-1) > currentState, true
+		} else {
+			return true;
 		}
 	}
 
 	@Override
 	public void undo() {
 		if (canUndo()) {
-			currentState--;
-			model = originator.getStateFromMemento(careTaker.getMemento(currentState));
-			// Rendering new view in scene builder
-			// Redo button enabled here
-			System.out.println("Undo done");
-		} else {
-			// Undo button disabled here
-			System.out.println("Can't undo");
-		}
+			careTaker.addMementoRedoList(originator.saveStateToMemento());
+			State state = originator.getStateFromMemento(careTaker.getMementoFromUndoList());
+			model = state;
+			RenderImg(model.getRightBankCrossers(), model.getLeftBankCrossers(), model.getBoatRiders(),
+					model.getIsBoatOnTheLeftBank());
+			redoBtn.setDisable(false);
+			scoreLabel.setText("Score : " + getNumberOfSails());
 
+		} else {
+			undoBtn.setDisable(true);
+			Alert.display("Can't undo");
+		}
 	}
 
 	@Override
 	public void redo() {
 		if (canRedo()) {
-			currentState++;
-			model = originator.getStateFromMemento(careTaker.getMemento(currentState));
-			// Rendering new view in scene builder
-			// Undo button enabled here
-			System.out.println("Redo done");
+			careTaker.addMementoUndoList(originator.saveStateToMemento());
+			State state = originator.getStateFromMemento(careTaker.getMementoFromRedoList());
+			model = state;
+			RenderImg(model.getRightBankCrossers(), model.getLeftBankCrossers(), model.getBoatRiders(),
+					model.getIsBoatOnTheLeftBank());
+			undoBtn.setDisable(false);
+			scoreLabel.setText("Score : " + getNumberOfSails());
+
 		} else {
-			// Redo button disabled here
-			System.out.println("Can't Redo");
+			redoBtn.setDisable(true);
+			Alert.display("Can't redo");
 		}
 	}
 
 	@Override
 	public void saveGame() {
-		invoker.setCommand(saveGame);
-		invoker.executeCommand();
+		UsernameBox save=new UsernameBox();
+		save.saveBox(model);
 	}
 
 	@Override
 	public void loadGame() {
+		model = new State();
+		System.out.println(username+"--------------------------------");
+		model.setUserName(username);
+		loadGame = new LoadGame(model);
+		careTaker.clearMementoUndoList();
+		careTaker.clearMementoRedoList();
 		invoker.setCommand(loadGame);
 		invoker.executeCommand();
+		originator.setState(model);
+		undoBtn.setDisable(true);
+		redoBtn.setDisable(true);
+		RenderImg(model.getRightBankCrossers(), model.getLeftBankCrossers(), model.getBoatRiders(),
+				model.getIsBoatOnTheLeftBank());
 	}
 
 	public void levelOneComplete() {
-		/**
-		 * MessageBox with restart button and nextLevel button if pressed restart call
-		 * restart method if pressd next level do ICrossingStrategy strategy=new
-		 * LevelTwo(); then call newGame(strategy);
-		 **/
+		Alert.display("Well Done Level One Complete");
+
 	}
 
-	@Override
+	public void levelTwoComplete() {
+		Alert.display("Well Done Level Two Complete");
+	}
 
-	public void initialize(URL location, ResourceBundle resources) {
+	public void startBtnAction(ActionEvent event) throws IOException {
+		FXMLLoader loader = new FXMLLoader();
+		loader.setLocation(getClass().getResource("Start.fxml"));
+		Parent GameGUI = loader.load();
 
-		counter = 0;
-		boatList = new ArrayList<String>();
-		leftList = new ArrayList<String>();
-		rightList = new ArrayList<String>();
-		rightList.addAll(Arrays.asList(imgArray));
-		move1 = new TranslateTransition();
-		move2 = new TranslateTransition();
-		move3 = new TranslateTransition();
-		move1.setDuration(Duration.millis(200));
-		move2.setDuration(Duration.millis(200));
-		move3.setDuration(Duration.millis(200));
+		Scene GameScene = new Scene(GameGUI);
 
+		Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
+		window.setScene(GameScene);
+		window.show();
 	}
 
 	public void btnAction() {
 
+		doMove(getCrossersOnBoat(), isBoatOnTheLeftBank());
 	}
 
-	public void movePlant() {
+	public void RenderImg(List<ICrosser> rightBankCrossers, List<ICrosser> leftBankCrossers,
+			List<ICrosser> BoatCrossers, boolean postition) {
 
-		move1.setNode(plant);
-		if (rightList.contains("Plant")) {
-			rightList.remove("Plant");
-			boatList.add("Plant");
-			move1.setByX(-51);
-			move1.setByY(105);
-			move1.play();
+		for (int i = 0; i < rightBankCrossers.size(); i++) {
+			if (rightBankCrossers.get(i) instanceof Farmer) {
+				if (rightBankCrossers.get(i).getWeight() == 0) {
+					image = SwingFXUtils.toFXImage(rightBankCrossers.get(i).getImages()[0], null);
+					farmerImg.setImage(image);
+					farmerImg.setLayoutX(683 - ani.getNewXFarmer());
+					farmerImg.setLayoutY(490 - ani.getNewYFarmer());
+				} else if (rightBankCrossers.get(i).getWeight() == 90) {
+					image = SwingFXUtils.toFXImage(rightBankCrossers.get(i).getImages()[0], null);
+					farmer1Img.setImage(image);
+					farmer1Img.setLayoutX(770 - ani.getNewXFarmer1());
+					farmer1Img.setLayoutY(510 - ani.getNewYFarmer1());
+				} else if (rightBankCrossers.get(i).getWeight() == 80) {
+					image = SwingFXUtils.toFXImage(rightBankCrossers.get(i).getImages()[0], null);
+					farmer2Img.setImage(image);
+					farmer2Img.setLayoutX(618 - ani.getNewXFarmer2());
+					farmer2Img.setLayoutY(471 - ani.getNewYFarmer2());
+				} else if (rightBankCrossers.get(i).getWeight() == 60) {
+					image = SwingFXUtils.toFXImage(rightBankCrossers.get(i).getImages()[0], null);
+					farmer3Img.setImage(image);
+					farmer3Img.setLayoutX(840 - ani.getNewXFarmer3());
+					farmer3Img.setLayoutY(545 - ani.getNewYFarmer3());
+				} else if (rightBankCrossers.get(i).getWeight() == 40) {
+					image = SwingFXUtils.toFXImage(rightBankCrossers.get(i).getImages()[0], null);
+					farmer4Img.setImage(image);
+					farmer4Img.setLayoutX(690 - ani.getNewXFarmer4());
+					farmer4Img.setLayoutY(500 - ani.getNewYFarmer4());
+				}
 
-		} else if (boatList.contains("Plant")) {
-			if (isBoatOnTheLeftBank()) {
-				boatList.remove("Plant");
-				rightList.add("Plant");
-				System.out.println(boatList);
-				move1.setByX(51);
-				move1.setByY(-105);
-				move1.play();
-			} else {
-
+			} else if (rightBankCrossers.get(i) instanceof Carnivorous) {
+				image = SwingFXUtils.toFXImage(rightBankCrossers.get(i).getImages()[0], null);
+				carniImg.setImage(image);
+				carniImg.setLayoutX(744 - ani.getNewXCarni());
+				carniImg.setLayoutY(524 - ani.getNewYCarni());
+			} else if (rightBankCrossers.get(i) instanceof Herbivorous) {
+				if (rightBankCrossers.get(i).getWeight() == 0) {
+					image = SwingFXUtils.toFXImage(rightBankCrossers.get(i).getImages()[0], null);
+					herbiImg.setImage(image);
+					herbiImg.setLayoutX(618 - ani.getNewXHerbi());
+					herbiImg.setLayoutY(471 - ani.getNewYHerbi());
+				} else if (rightBankCrossers.get(i).getWeight() == 20) {
+					image = SwingFXUtils.toFXImage(rightBankCrossers.get(i).getImages()[0], null);
+					animalImg.setImage(image);
+					animalImg.setLayoutX(549 - ani.getNewXAnimal());
+					animalImg.setLayoutY(462 - ani.getNewYAnimal());
+				}
+			} else if (rightBankCrossers.get(i) instanceof Plant) {
+				image = SwingFXUtils.toFXImage(rightBankCrossers.get(i).getImages()[0], null);
+				plantImg.setImage(image);
+				plantImg.setLayoutX(825 - ani.getNewXPlant());
+				plantImg.setLayoutY(539 - ani.getNewYPlant());
 			}
+
 		}
 
-	}
-
-	public void moveCarni() {
-
-		move1.setNode(carni);
-		if (rightList.contains("Carni")) {
-			rightList.remove("Carni");
-			boatList.add("Carni");
-			move1.setByX(28);
-			move1.setByY(134);
-			move1.play();
-
-		} else if (boatList.contains("Carni")) {
-			if (isBoatOnTheLeftBank()) {
-				boatList.remove("Carni");
-				rightList.add("Carni");
-				move1.setByX(-28);
-				move1.setByY(-134);
-				move1.play();
-			} else {
-
+		for (int i = 0; i < leftBankCrossers.size(); i++) {
+			if (leftBankCrossers.get(i) instanceof Farmer) {
+				if (leftBankCrossers.get(i).getWeight() == 0) {
+					image = SwingFXUtils.toFXImage(leftBankCrossers.get(i).getImages()[1], null);
+					farmerImg.setImage(image);
+					farmerImg.setLayoutX(195 - ani.getNewXFarmer());
+					farmerImg.setLayoutY(510 - ani.getNewYFarmer());
+				} else if (leftBankCrossers.get(i).getWeight() == 90) {
+					image = SwingFXUtils.toFXImage(leftBankCrossers.get(i).getImages()[1], null);
+					farmer1Img.setImage(image);
+					farmer1Img.setLayoutX(200 - ani.getNewXFarmer1());
+					farmer1Img.setLayoutY(490 - ani.getNewYFarmer1());
+				} else if (leftBankCrossers.get(i).getWeight() == 80) {
+					image = SwingFXUtils.toFXImage(leftBankCrossers.get(i).getImages()[1], null);
+					farmer2Img.setImage(image);
+					farmer2Img.setLayoutX(130 - ani.getNewXFarmer2());
+					farmer2Img.setLayoutY(505 - ani.getNewYFarmer2());
+				} else if (leftBankCrossers.get(i).getWeight() == 60) {
+					image = SwingFXUtils.toFXImage(leftBankCrossers.get(i).getImages()[1], null);
+					farmer3Img.setImage(image);
+					farmer3Img.setLayoutX(60 - ani.getNewXFarmer3());
+					farmer3Img.setLayoutY(557 - ani.getNewYFarmer3());
+				} else if (leftBankCrossers.get(i).getWeight() == 40) {
+					image = SwingFXUtils.toFXImage(leftBankCrossers.get(i).getImages()[1], null);
+					farmer4Img.setImage(image);
+					farmer4Img.setLayoutX(0 - ani.getNewXFarmer4());
+					farmer4Img.setLayoutY(550 - ani.getNewYFarmer4());
+				}
+			} else if (leftBankCrossers.get(i) instanceof Carnivorous) {
+				image = SwingFXUtils.toFXImage(leftBankCrossers.get(i).getImages()[1], null);
+				carniImg.setImage(image);
+				carniImg.setLayoutX(100 - ani.getNewXCarni());
+				carniImg.setLayoutY(550 - ani.getNewYCarni());
+			} else if (leftBankCrossers.get(i) instanceof Herbivorous) {
+				if (leftBankCrossers.get(i).getWeight() == 0) {
+					image = SwingFXUtils.toFXImage(leftBankCrossers.get(i).getImages()[1], null);
+					herbiImg.setImage(image);
+					herbiImg.setLayoutX(280 - ani.getNewXHerbi());
+					herbiImg.setLayoutY(480 - ani.getNewYHerbi());
+				} else if (leftBankCrossers.get(i).getWeight() == 20) {
+					image = SwingFXUtils.toFXImage(leftBankCrossers.get(i).getImages()[1], null);
+					animalImg.setImage(image);
+					animalImg.setLayoutX(262 - ani.getNewXAnimal());
+					animalImg.setLayoutY(462 - ani.getNewYAnimal());
+				}
+			} else if (leftBankCrossers.get(i) instanceof Plant) {
+				image = SwingFXUtils.toFXImage(leftBankCrossers.get(i).getImages()[1], null);
+				plantImg.setImage(image);
+				plantImg.setLayoutX(40 - ani.getNewXPlant());
+				plantImg.setLayoutY(539 - ani.getNewYPlant());
 			}
 		}
-	}
+		for (int i = 0; i < getCrossersOnBoat().size(); i++) {
+			if (!postition) {
 
-	public void moveHerbi() {
+				if (BoatCrossers.get(i) instanceof Farmer) {
+					if (leftBankCrossers.get(i).getWeight() == 0) {
+						if (BoatCrossers.size() > 0) {
+							image = SwingFXUtils.toFXImage(rightBankCrossers.get(i).getImages()[0], null);
+							farmerImg.setImage(image);
+							farmerImg.setLayoutX(721 - ani.getNewXPlant());
+							farmerImg.setLayoutY(611 - ani.getNewYPlant());
+						} else {
 
-		move1.setNode(herbi);
-		if (rightList.contains("Herbi")) {
-			rightList.remove("Herbi");
-			boatList.add("Herbi");
-			move1.setByX(158);
-			move1.setByY(165);
-			move1.play();
+							image = SwingFXUtils.toFXImage(rightBankCrossers.get(i).getImages()[0], null);
+							farmerImg.setImage(image);
+							farmerImg.setLayoutX(772 - ani.getNewXPlant());
+							farmerImg.setLayoutY(611 - ani.getNewYPlant());
 
-		} else if (boatList.contains("Herbi")) {
-			if (isBoatOnTheLeftBank()) {
-				boatList.remove("Herbi");
-				rightList.add("Herbi");
-				move1.setByX(-158);
-				move1.setByY(-165);
-				move1.play();
-			} else {
+						}
+					} else if (BoatCrossers.get(i).getWeight() == 90) {
+						if (BoatCrossers.size() > 0) {
+							image = SwingFXUtils.toFXImage(BoatCrossers.get(i).getImages()[0], null);
+							farmerImg.setImage(image);
+							farmerImg.setLayoutX(721 - ani.getNewXPlant());
+							farmerImg.setLayoutY(611 - ani.getNewYPlant());
+						} else {
+
+							image = SwingFXUtils.toFXImage(BoatCrossers.get(i).getImages()[0], null);
+							farmerImg.setImage(image);
+							farmerImg.setLayoutX(772 - ani.getNewXPlant());
+							farmerImg.setLayoutY(611 - ani.getNewYPlant());
+
+						}
+					} else if (BoatCrossers.get(i).getWeight() == 80) {
+						if (BoatCrossers.size() > 0) {
+							image = SwingFXUtils.toFXImage(BoatCrossers.get(i).getImages()[0], null);
+							farmerImg.setImage(image);
+							farmerImg.setLayoutX(721 - ani.getNewXPlant());
+							farmerImg.setLayoutY(611 - ani.getNewYPlant());
+						} else {
+
+							image = SwingFXUtils.toFXImage(BoatCrossers.get(i).getImages()[0], null);
+							farmerImg.setImage(image);
+							farmerImg.setLayoutX(772 - ani.getNewXPlant());
+							farmerImg.setLayoutY(611 - ani.getNewYPlant());
+
+						}
+					} else if (BoatCrossers.get(i).getWeight() == 60) {
+						if (BoatCrossers.size() > 0) {
+							image = SwingFXUtils.toFXImage(BoatCrossers.get(i).getImages()[0], null);
+							farmerImg.setImage(image);
+							farmerImg.setLayoutX(721 - ani.getNewXPlant());
+							farmerImg.setLayoutY(611 - ani.getNewYPlant());
+						} else {
+
+							image = SwingFXUtils.toFXImage(BoatCrossers.get(i).getImages()[0], null);
+							farmerImg.setImage(image);
+							farmerImg.setLayoutX(772 - ani.getNewXPlant());
+							farmerImg.setLayoutY(611 - ani.getNewYPlant());
+
+						}
+					} else if (BoatCrossers.get(i).getWeight() == 721) {
+						if (BoatCrossers.size() > 0) {
+							image = SwingFXUtils.toFXImage(BoatCrossers.get(i).getImages()[0], null);
+							farmerImg.setImage(image);
+							farmerImg.setLayoutX(721 - ani.getNewXPlant());
+							farmerImg.setLayoutY(611 - ani.getNewYPlant());
+						} else {
+
+							image = SwingFXUtils.toFXImage(BoatCrossers.get(i).getImages()[0], null);
+							farmerImg.setImage(image);
+							farmerImg.setLayoutX(772 - ani.getNewXPlant());
+							farmerImg.setLayoutY(611 - ani.getNewYPlant());
+
+						}
+					}
+				} else if (BoatCrossers.get(i) instanceof Carnivorous) {
+					if (BoatCrossers.size() > 0) {
+						image = SwingFXUtils.toFXImage(BoatCrossers.get(i).getImages()[0], null);
+						carniImg.setImage(image);
+						carniImg.setLayoutX(721 - ani.getNewXPlant());
+						carniImg.setLayoutY(611 - ani.getNewYPlant());
+					} else {
+
+						image = SwingFXUtils.toFXImage(BoatCrossers.get(i).getImages()[0], null);
+						carniImg.setImage(image);
+						carniImg.setLayoutX(772 - ani.getNewXPlant());
+						carniImg.setLayoutY(611 - ani.getNewYPlant());
+
+					}
+				} else if (BoatCrossers.get(i) instanceof Herbivorous) {
+					if (BoatCrossers.get(i).getWeight() == 0) {
+						if (BoatCrossers.size() > 0) {
+							image = SwingFXUtils.toFXImage(BoatCrossers.get(i).getImages()[0], null);
+							herbiImg.setImage(image);
+							herbiImg.setLayoutX(721 - ani.getNewXPlant());
+							herbiImg.setLayoutY(611 - ani.getNewYPlant());
+						} else {
+
+							image = SwingFXUtils.toFXImage(BoatCrossers.get(i).getImages()[0], null);
+							herbiImg.setImage(image);
+							herbiImg.setLayoutX(772 - ani.getNewXPlant());
+							herbiImg.setLayoutY(611 - ani.getNewYPlant());
+
+						}
+					} else if (BoatCrossers.get(i).getWeight() == 20) {
+						if (BoatCrossers.size() > 0) {
+							image = SwingFXUtils.toFXImage(BoatCrossers.get(i).getImages()[0], null);
+							herbiImg.setImage(image);
+							herbiImg.setLayoutX(721 - ani.getNewXPlant());
+							herbiImg.setLayoutY(611 - ani.getNewYPlant());
+						} else {
+
+							image = SwingFXUtils.toFXImage(BoatCrossers.get(i).getImages()[0], null);
+							animalImg.setImage(image);
+							animalImg.setLayoutX(772 - ani.getNewXPlant());
+							animalImg.setLayoutY(611 - ani.getNewYPlant());
+
+						}
+					}
+				} else if (BoatCrossers.get(i) instanceof Plant) {
+					if (BoatCrossers.size() > 0) {
+						image = SwingFXUtils.toFXImage(BoatCrossers.get(i).getImages()[0], null);
+						plantImg.setImage(image);
+						plantImg.setLayoutX(721 - ani.getNewXPlant());
+						plantImg.setLayoutY(611 - ani.getNewYPlant());
+					} else {
+
+						image = SwingFXUtils.toFXImage(BoatCrossers.get(i).getImages()[0], null);
+						plantImg.setImage(image);
+						plantImg.setLayoutX(772 - ani.getNewXPlant());
+						plantImg.setLayoutY(611 - ani.getNewYPlant());
+
+					}
+				}
 
 			}
+
+			else if (postition) {
+				if (BoatCrossers.get(i) instanceof Farmer) {
+					if (leftBankCrossers.get(i).getWeight() == 0) {
+						if (BoatCrossers.size() > 0) {
+							image = SwingFXUtils.toFXImage(leftBankCrossers.get(i).getImages()[1], null);
+							farmerImg.setImage(image);
+							farmerImg.setLayoutX(111 - ani.getNewXPlant());
+							farmerImg.setLayoutY(611 - ani.getNewYPlant());
+						} else {
+
+							image = SwingFXUtils.toFXImage(leftBankCrossers.get(i).getImages()[1], null);
+							farmerImg.setImage(image);
+							farmerImg.setLayoutX(173 - ani.getNewXPlant());
+							farmerImg.setLayoutY(611 - ani.getNewYPlant());
+
+						}
+					} else if (leftBankCrossers.get(i).getWeight() == 90) {
+						if (BoatCrossers.size() > 0) {
+							image = SwingFXUtils.toFXImage(leftBankCrossers.get(i).getImages()[1], null);
+							farmerImg.setImage(image);
+							farmerImg.setLayoutX(111 - ani.getNewXPlant());
+							farmerImg.setLayoutY(611 - ani.getNewYPlant());
+						} else {
+
+							image = SwingFXUtils.toFXImage(leftBankCrossers.get(i).getImages()[1], null);
+							farmerImg.setImage(image);
+							farmerImg.setLayoutX(173 - ani.getNewXPlant());
+							farmerImg.setLayoutY(611 - ani.getNewYPlant());
+
+						}
+					} else if (leftBankCrossers.get(i).getWeight() == 80) {
+						if (BoatCrossers.size() > 0) {
+							image = SwingFXUtils.toFXImage(leftBankCrossers.get(i).getImages()[1], null);
+							farmerImg.setImage(image);
+							farmerImg.setLayoutX(111 - ani.getNewXPlant());
+							farmerImg.setLayoutY(611 - ani.getNewYPlant());
+						} else {
+
+							image = SwingFXUtils.toFXImage(leftBankCrossers.get(i).getImages()[1], null);
+							farmerImg.setImage(image);
+							farmerImg.setLayoutX(173 - ani.getNewXPlant());
+							farmerImg.setLayoutY(611 - ani.getNewYPlant());
+
+						}
+					} else if (leftBankCrossers.get(i).getWeight() == 60) {
+						if (BoatCrossers.size() > 0) {
+							image = SwingFXUtils.toFXImage(leftBankCrossers.get(i).getImages()[1], null);
+							farmerImg.setImage(image);
+							farmerImg.setLayoutX(111 - ani.getNewXPlant());
+							farmerImg.setLayoutY(611 - ani.getNewYPlant());
+						} else {
+
+							image = SwingFXUtils.toFXImage(leftBankCrossers.get(i).getImages()[1], null);
+							farmerImg.setImage(image);
+							farmerImg.setLayoutX(173 - ani.getNewXPlant());
+							farmerImg.setLayoutY(611 - ani.getNewYPlant());
+
+						}
+					} else if (leftBankCrossers.get(i).getWeight() == 40) {
+						if (BoatCrossers.size() > 0) {
+							image = SwingFXUtils.toFXImage(leftBankCrossers.get(i).getImages()[1], null);
+							farmerImg.setImage(image);
+							farmerImg.setLayoutX(111 - ani.getNewXPlant());
+							farmerImg.setLayoutY(611 - ani.getNewYPlant());
+						} else {
+
+							image = SwingFXUtils.toFXImage(leftBankCrossers.get(i).getImages()[1], null);
+							farmerImg.setImage(image);
+							farmerImg.setLayoutX(173 - ani.getNewXPlant());
+							farmerImg.setLayoutY(611 - ani.getNewYPlant());
+
+						}
+					}
+				} else if (leftBankCrossers.get(i) instanceof Carnivorous) {
+					if (BoatCrossers.size() > 0) {
+						image = SwingFXUtils.toFXImage(leftBankCrossers.get(i).getImages()[1], null);
+						carniImg.setImage(image);
+						carniImg.setLayoutX(111 - ani.getNewXPlant());
+						carniImg.setLayoutY(611 - ani.getNewYPlant());
+					} else {
+
+						image = SwingFXUtils.toFXImage(leftBankCrossers.get(i).getImages()[1], null);
+						carniImg.setImage(image);
+						carniImg.setLayoutX(173 - ani.getNewXPlant());
+						carniImg.setLayoutY(611 - ani.getNewYPlant());
+
+					}
+				} else if (leftBankCrossers.get(i) instanceof Herbivorous) {
+					if (leftBankCrossers.get(i).getWeight() == 0) {
+						if (BoatCrossers.size() > 0) {
+							image = SwingFXUtils.toFXImage(leftBankCrossers.get(i).getImages()[1], null);
+							herbiImg.setImage(image);
+							herbiImg.setLayoutX(111 - ani.getNewXPlant());
+							herbiImg.setLayoutY(611 - ani.getNewYPlant());
+						} else {
+
+							image = SwingFXUtils.toFXImage(leftBankCrossers.get(i).getImages()[1], null);
+							herbiImg.setImage(image);
+							herbiImg.setLayoutX(173 - ani.getNewXPlant());
+							herbiImg.setLayoutY(611 - ani.getNewYPlant());
+
+						}
+					} else if (leftBankCrossers.get(i).getWeight() == 20) {
+						if (BoatCrossers.size() > 0) {
+							image = SwingFXUtils.toFXImage(leftBankCrossers.get(i).getImages()[1], null);
+							herbiImg.setImage(image);
+							herbiImg.setLayoutX(111 - ani.getNewXPlant());
+							herbiImg.setLayoutY(611 - ani.getNewYPlant());
+						} else {
+
+							image = SwingFXUtils.toFXImage(leftBankCrossers.get(i).getImages()[1], null);
+							herbiImg.setImage(image);
+							herbiImg.setLayoutX(173 - ani.getNewXPlant());
+							herbiImg.setLayoutY(611 - ani.getNewYPlant());
+
+						}
+					}
+				} else if (leftBankCrossers.get(i) instanceof Plant) {
+					if (BoatCrossers.size() > 0) {
+						image = SwingFXUtils.toFXImage(leftBankCrossers.get(i).getImages()[1], null);
+						plantImg.setImage(image);
+						plantImg.setLayoutX(111 - ani.getNewXPlant());
+						plantImg.setLayoutY(611 - ani.getNewYPlant());
+					} else {
+
+						image = SwingFXUtils.toFXImage(leftBankCrossers.get(i).getImages()[1], null);
+						plantImg.setImage(image);
+						plantImg.setLayoutX(173 - ani.getNewXPlant());
+						plantImg.setLayoutY(611 - ani.getNewYPlant());
+
+					}
+				}
+
+			}
+
 		}
-	}
+		if (!postition) {
 
-	public void moveFarmer() {
-		move1.setNode(farmer);
-		if (rightList.contains("Farmer")) {
-			rightList.remove("Farmer");
-			boatList.add("Farmer");
-			move1.setByX(31);
-			move1.setByY(145);
-			move1.play();
+			boatImg.setLayoutX(667);
+			boatImg.setLayoutY(692);
 
-		} else if (boatList.contains("Farmer")) {
-			if (isBoatOnTheLeftBank()) {
-				boatList.remove("Farmer");
-				rightList.add("Farmer");
-				move1.setByX(-31);
-				move1.setByY(-145);
-				move1.play();
-			} else {
+		} else {
 
-			}
+			boatImg.setLayoutX(67);
+			boatImg.setLayoutY(692);
+
 		}
 	}
 
 	public ImageView getinBoat(int i) {
 
-		switch (boatList.get(i)) {
+		int j = model.getBoatRiders().get(i).toString().indexOf("@");
+		switch (model.getBoatRiders().get(i).toString().substring(0, j)) {
 
 		case "Farmer":
-			return farmer;
+			return farmerImg;
 
-		case "Carni":
-			return carni;
+		case "Carnivorous":
+			return carniImg;
 
-		case "Herbi":
-			return herbi;
+		case "Herbivorous":
+			return herbiImg;
 
 		case "Plant":
-			return plant;
+			return plantImg;
 
 		default:
 			return null;
@@ -422,24 +727,40 @@ public class GameEngine implements IRiverCrossingController, Initializable {
 
 	}
 
-	// Test to be removed:
-	public void printState() {
-		System.out.println(model.toString());
-	}
+	public void initialize(URL location, ResourceBundle resources) {
 
-	// Test to be removed:
-	public void removeLeft(ICrosser crosser) {
-		model.removeLeftCrosser(crosser);
-	}
+		scoreLabel.setText("Score : 0");
 
-	// Test to be removed:
-	public void removeRight(ICrosser crosser) {
-		model.removeRightCrosser(crosser);
-	}
+		plantImg.setOnMouseClicked(e -> {
+			ani.movePlant(plantImg);
+		});
 
-	// Test to be removed:
-	public void addRider(ICrosser crosser) {
-		model.addRider(crosser);
+		carniImg.setOnMouseClicked(e -> {
+			ani.moveCarni(carniImg);
+		});
+
+		herbiImg.setOnMouseClicked(e -> {
+			ani.moveHerbi(herbiImg);
+		});
+
+		farmerImg.setOnMouseClicked(e -> {
+			ani.moveFarmer(farmerImg);
+		});
+		farmer1Img.setOnMouseClicked(e -> {
+			ani.moveFarmer1(farmer1Img);
+		});
+		farmer2Img.setOnMouseClicked(e -> {
+			ani.moveFarmer2(farmer2Img);
+		});
+		farmer3Img.setOnMouseClicked(e -> {
+			ani.moveFarmer3(farmer3Img);
+		});
+		farmer4Img.setOnMouseClicked(e -> {
+			ani.moveFarmer4(farmer4Img);
+		});
+		animalImg.setOnMouseClicked(e -> {
+			ani.moveAnimal(animalImg);
+		});
 	}
 
 	@Override
@@ -448,4 +769,11 @@ public class GameEngine implements IRiverCrossingController, Initializable {
 		return null;
 	}
 
+	public void setUsername(String name) {
+		username = name;
+	}
+
+	public void printState(){
+		System.out.println(model.toString());
+	}
 }
