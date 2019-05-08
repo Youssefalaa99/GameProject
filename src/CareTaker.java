@@ -1,17 +1,43 @@
-import java.util.ArrayList;
+import java.util.Stack;
 
 public class CareTaker {
-    private ArrayList<Memento> mementoList=new ArrayList<>();
+    private Stack<Memento> mementoUndoList=new Stack<>();
+    private Stack<Memento> mementoRedoList=new Stack<>();
 
-    public void addMemento(Memento memento){
-        mementoList.add(memento);
+    public void addMementoUndoList(Memento memento){
+        mementoUndoList.push(memento);
     }
 
-    public void clearMemento(){
-        mementoList.clear();
+    public void addMementoRedoList(Memento memento){
+        mementoRedoList.push(memento);
     }
 
-    public Memento getMemento(int index){
-        return mementoList.get(index);
+    public void clearMementoUndoList(){
+        while (!mementoUndoList.isEmpty()){
+            mementoUndoList.pop();
+        }
+    }
+
+    public void clearMementoRedoList(){
+        while (!mementoRedoList.isEmpty()){
+            mementoRedoList.pop();
+        }
+    }
+
+    public Memento getMementoFromUndoList(){
+        return mementoUndoList.pop();
+    }
+
+    public Memento getMementoFromRedoList(){
+        return mementoRedoList.pop();
+    }
+
+
+    public Stack<Memento> getMementoUndoList() {
+        return mementoUndoList;
+    }
+
+    public Stack<Memento> getMementoRedoList() {
+        return mementoRedoList;
     }
 }

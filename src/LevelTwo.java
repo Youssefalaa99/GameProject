@@ -21,7 +21,7 @@ public class LevelTwo implements ICrossingStrategy {
     @Override
     public boolean isValid(List<ICrosser> rightBankCrossers, List<ICrosser> leftBankCrossers, List<ICrosser> boatRiders) {
         if(boatRiders.isEmpty()){
-            System.out.println("Empty boat");
+        	(new Alert()).display("Empty boat");
             return false;
         }
         int flag=0;
@@ -34,19 +34,25 @@ public class LevelTwo implements ICrossingStrategy {
         }
 
         if(flag==0){
-            System.out.println("No farmer on boat");
+        	(new Alert()).display("No Farmer on the boat");
+
             return false;
         }
 
-        int i=0;
-        ICrosser crosser1=boatRiders.get(i);
-        ICrosser crosser2=boatRiders.get(i+1);
+        if(boatRiders.size()==1)
+            return true;
+        else {
 
-        if(crosser1.getWeight()+crosser2.getWeight() > 100){
-            System.out.println("Overweight");
-            return false;
+
+            int i = 0;
+            ICrosser crosser1 = boatRiders.get(i);
+            ICrosser crosser2 = boatRiders.get(i + 1);
+
+            if (crosser1.getWeight() + crosser2.getWeight() > 100) {
+                (new Alert()).display("Overweight");
+                return false;
+            }
         }
-
 
         return true;
 
@@ -71,6 +77,6 @@ public class LevelTwo implements ICrossingStrategy {
         instructions[2]="Rules:";
         instructions[3]="1- The boat cannot bear a load heavier than 100 kg.";
         instructions[4]="2- All farmers can raft, while the animal cannot.";
-        return getInstructions();
+        return instructions;
     }
 }

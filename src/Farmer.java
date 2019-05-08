@@ -2,18 +2,20 @@ import java.awt.image.BufferedImage;
 
 public class Farmer implements ICrosser {
 
-    private double weight;
+    private double weight=0.0;
     private BufferedImage[] gif;
     private String lbl;
-    private final int eatingRank=5;
+    private final int eatingRank=4;
 
-    public Farmer (double w,BufferedImage[] g){
+    public Farmer (double w,BufferedImage[] g,String label){
         weight=w;
         gif=g;
+        lbl=label;
     }
 
-    public Farmer (BufferedImage[] g){
+    public Farmer (BufferedImage[] g,String label){
         gif=g;
+        lbl=label;
     }
 
     public boolean canSail(){

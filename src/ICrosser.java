@@ -42,4 +42,10 @@ public interface ICrosser {
      * @return gets label of the crosser depending on the current game
      */
     public String getLabelToBeShown();
+
+    public boolean canSailAccompanied();
+
+    public boolean canStayAlone();
+
+    public boolean mustSailAccompanied();
 }

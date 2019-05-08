@@ -7,8 +7,9 @@ public class Plant implements ICrosser {
     private final int eatingRank=0;
 
 
-    public  Plant (BufferedImage[] g){
+    public  Plant (BufferedImage[] g,String label){
         gif=g;
+        lbl=label;
     }
 
 
