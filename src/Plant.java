@@ -12,6 +12,20 @@ public class Plant implements ICrosser {
         lbl=label;
     }
 
+    @Override
+    public boolean canSailAccompanied() {
+        return false;
+    }
+
+    @Override
+    public boolean canStayAlone() {
+        return false;
+    }
+
+    @Override
+    public boolean mustSailAccompanied() {
+        return false;
+    }
 
     @Override
     public boolean canSail() {
