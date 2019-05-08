@@ -59,18 +59,21 @@ public class XmlFile {
 				level.appendChild(doc.createTextNode("Level 1"));
 			else if (state.getStrategy() instanceof LevelTwo)
 				level.appendChild(doc.createTextNode("Level 2"));
+			else
+				level.appendChild(doc.createTextNode("Level 3"));
+
 			player.appendChild(level);
 
 			Element rightBankCrossers = doc.createElement("rightBankCrossers");
 			rightBankCrosserslist=state.getRightBankCrossers();
 			Iterator iterator = rightBankCrosserslist.iterator();
-			Element Crosser;
+			Element Crosser = null;
 			while(iterator.hasNext()) {
 				ICrosser crosser=(ICrosser) iterator.next();
+				Crosser = doc.createElement("crosser");
 				if (crosser instanceof Farmer) {
 					x = Double.toString(crosser.getWeight());
 
-					Crosser = doc.createElement("crosser");
 					switch (x) {
 
 						case "0.0":
@@ -96,7 +99,6 @@ public class XmlFile {
 
 				else if(crosser instanceof Herbivorous) {
 					x = Double.toString(crosser.getWeight());
-					Crosser = doc.createElement("crosser");
 
 					switch (x) {
 						case "0.0":
@@ -110,9 +112,14 @@ public class XmlFile {
 					}
 					rightBankCrossers.appendChild(Crosser);
 				}
+
+				else if (crosser instanceof Knight){
+					x=crosser.getLabelToBeShown();
+					Crosser.appendChild(doc.createTextNode(x + "Knight"));
+					rightBankCrossers.appendChild(Crosser);
+				}
 				else{
 
-					Crosser = doc.createElement("crosser");
 					Crosser.appendChild(doc.createTextNode(crosser.getClass().toString().substring(6)));
 					rightBankCrossers.appendChild(Crosser);
 				}
@@ -169,6 +176,11 @@ public class XmlFile {
 
 					}
 					leftBankCrossers.appendChild(Crosser);
+				}
+				else if (crosser instanceof Knight){
+					x=crosser.getLabelToBeShown();
+					Crosser.appendChild(doc.createTextNode(x + "Knight"));
+					rightBankCrossers.appendChild(Crosser);
 				}
 				else{
 
@@ -242,6 +254,11 @@ public class XmlFile {
 						LevelOne one = new LevelOne();
 						state.setStrategy(one);
 					}
+					else if (name.equals(nodeAttr.getNodeValue())){
+						LevelThree three = new LevelThree();
+						state.setStrategy(three);
+					}
+
 					else
 					{
 						LevelTwo two=new LevelTwo();
@@ -276,11 +293,18 @@ public class XmlFile {
 							case "Herbivorous":
 								crosser=factory.createCrosseer("H");
 								break;
-
 							case "Plant":
 								crosser=factory.createCrosseer("P");
 								break;
-
+							case "LazyKnight":
+								crosser=factory.createCrosseer("LK");
+								break;
+							case "BraveKnight":
+								crosser=factory.createCrosseer("BK");
+								break;
+							case "ArrogantKnight":
+								crosser=factory.createCrosseer("AK");
+								break;
 						}
 						rightList.add(crosser);
 
@@ -317,6 +341,15 @@ public class XmlFile {
 
 							case "Plant":
 								crosser=factory.createCrosseer("P");
+								break;
+							case "LazyKnight":
+								crosser=factory.createCrosseer("LK");
+								break;
+							case "BraveKnight":
+								crosser=factory.createCrosseer("BK");
+								break;
+							case "ArrogantKnight":
+								crosser=factory.createCrosseer("AK");
 								break;
 
 						}

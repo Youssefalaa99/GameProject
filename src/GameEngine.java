@@ -265,7 +265,9 @@ public class GameEngine implements IRiverCrossingController, Initializable {
 		careTaker.clearMementoRedoList();
 		invoker.setCommand(loadGame);
 		invoker.executeCommand();
-		originator.setState(model);
+		State modelCopy = new State();
+		model.copyState(modelCopy);
+		originator.setState(modelCopy);
 		undoBtn.setDisable(true);
 		redoBtn.setDisable(true);
 		scoreLabel.setText("Score : " + getNumberOfSails());
