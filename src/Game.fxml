@@ -29,7 +29,7 @@
             <Button fx:id="resetBtn" mnemonicParsing="false" onAction="#resetGame" text="Reset" />
             <Button fx:id="undoBtn" mnemonicParsing="false" onAction="#undo" text="Undo" />
             <Button fx:id="redoBtn" mnemonicParsing="false" onAction="#redo" text="Redo" />
-            <Button fx:id="instBtn" mnemonicParsing="false" onAction="#Instructions" text="Instructions" />
+            <Button fx:id="instBtn" mnemonicParsing="false" onAction="#instructions" text="Instructions" />
             <Button fx:id="exitBtn" mnemonicParsing="false" onAction="#startBtnAction" text="Back" />
             <Button mnemonicParsing="false" onAction="#saveGame" text="Save" />
          </children>

@@ -151,7 +151,7 @@ public class GameEngine implements IRiverCrossingController, Initializable {
 		}
 	}
 
-	public void Instructions() {
+	public void instructions() {
 		InstructionsBox.displayInstructions(getInstructions());
 	}
 

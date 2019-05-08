@@ -11,7 +11,7 @@ public class InstructionsBox {
     public static void displayInstructions(String[] instructions){
         Stage window=new Stage();
         window.initModality(Modality.APPLICATION_MODAL);
-        window.setTitle("Instructions");
+        window.setTitle("instructions");
 
         Label[] labels=new Label[10];
         for(int i=0;i<instructions.length;i++){

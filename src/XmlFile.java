@@ -59,7 +59,7 @@ public class XmlFile {
 				level.appendChild(doc.createTextNode("Level 1"));
 			else if (state.getStrategy() instanceof LevelTwo)
 				level.appendChild(doc.createTextNode("Level 2"));
-			else
+			else if(state.getStrategy() instanceof LevelThree)
 				level.appendChild(doc.createTextNode("Level 3"));
 
 			player.appendChild(level);
@@ -254,16 +254,17 @@ public class XmlFile {
 						LevelOne one = new LevelOne();
 						state.setStrategy(one);
 					}
-					else if (name.equals(nodeAttr.getNodeValue())){
+
+					else if (loadElements.item(0).getTextContent().equals("Level 2")){
+						LevelTwo two=new LevelTwo();
+						state.setStrategy(two);
+					}
+
+					else if (loadElements.item(0).getTextContent().equals("Level 3")){
 						LevelThree three = new LevelThree();
 						state.setStrategy(three);
 					}
 
-					else
-					{
-						LevelTwo two=new LevelTwo();
-						state.setStrategy(two);
-					}
 
 					NodeList rightElements=loadElements.item(1).getChildNodes();
 					for (temp = 0; temp < rightElements.getLength(); temp++) {

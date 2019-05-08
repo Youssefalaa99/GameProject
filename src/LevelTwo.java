@@ -49,7 +49,7 @@ public class LevelTwo implements ICrossingStrategy {
             ICrosser crosser2 = boatRiders.get(i + 1);
 
             if (crosser1.getWeight() + crosser2.getWeight() > 100) {
-                (new Alert()).display("Overweight");
+                (new Alert()).display("Overweight boat will sink!");
                 return false;
             }
         }
