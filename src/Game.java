@@ -8,11 +8,7 @@ public class Game extends Application {
 	private Stage stage = new Stage();
 
 	public static void main(String[] args) {
-		new XmlFile().removePlayer("blo222");
-		new XmlFile().removePlayer("nium");
-		new XmlFile().removePlayer("mmmm");
 		launch(args);
-
 	}
 
 	public void start(Stage primaryStage) throws Exception {
