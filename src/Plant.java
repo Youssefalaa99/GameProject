@@ -7,10 +7,25 @@ public class Plant implements ICrosser {
     private final int eatingRank=0;
 
 
-    public  Plant (BufferedImage[] g){
+    public  Plant (BufferedImage[] g,String label){
         gif=g;
+        lbl=label;
     }
 
+    @Override
+    public boolean canSailAccompanied() {
+        return false;
+    }
+
+    @Override
+    public boolean canStayAlone() {
+        return false;
+    }
+
+    @Override
+    public boolean mustSailAccompanied() {
+        return false;
+    }
 
     @Override
     public boolean canSail() {

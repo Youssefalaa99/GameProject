@@ -5,6 +5,7 @@ public class Originator {
         this.state=state;
     }
 
+    //To be removed if not used
     public State getState(){
         return this.state;
     }
